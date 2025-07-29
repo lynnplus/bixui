@@ -1,0 +1,10 @@
+<component name="CopyrightManager">
+  <settings default="cev-apache2">
+    <module2copyright>
+      <element module="Project Files" copyright="cev-apache2" />
+    </module2copyright>
+    <LanguageOptions name="C/C++">
+      <option name="fileTypeOverride" value="3" />
+    </LanguageOptions>
+  </settings>
+</component>
