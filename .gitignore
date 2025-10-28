@@ -29,6 +29,9 @@ CMakeUserPresets.json
 .idea/**/editor.xml
 .idea/**/misc.xml
 .idea/**/vcs.xml
+.idea/**/codeStyles
+.idea/**/fileTemplates
+.idea/**/inspectionProfiles
 
 # Generated files
 .idea/**/contentModel.xml
