@@ -14,15 +14,34 @@
  * limitations under the License.
  */
 
-
-#include "frame_window.h"
-#include "bixlib/core/application.h"
+#pragma once
 
 
-int main(int argc, char* argv[]) {
-    bix::Application app(argc, argv);
-    FrameWindow window;
-    window.setTitle("示例窗口");
-    window.show();
-    return app.run();
+#include "canvas.h"
+#include "bixlib/core/window.h"
+
+namespace bix {
+class BIX_PUBLIC RenderEngine {
+public:
+    virtual ~RenderEngine() = default;
+
+    enum Type {
+        Direct2D,
+        GDIPlus,
+        X11,
+
+        UserCustom = 100
+    };
+
+    static RenderEngine* from(Type t);
+
+    virtual void shutdown() noexcept =0;
+
+    [[nodiscard]]
+    virtual Type type() const noexcept =0;
+
+    virtual CanvasPtr createCanvas(const Window& w) =0;
+};
 }
+
+

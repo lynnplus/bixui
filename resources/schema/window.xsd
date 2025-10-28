@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2025 Lynn <lynnplus90@gmail.com>.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="bixlib"
+           xmlns="bixlib"
+
+           elementFormDefault="qualified">
+
+    <xs:include schemaLocation="data_type.xsd"/>
+    <xs:include schemaLocation="controls.xsd"/>
+
+
+    <xs:element name="Window">
+        <xs:annotation>
+            <xs:documentation>window</xs:documentation>
+        </xs:annotation>
+        <xs:complexType>
+            <xs:group ref="layoutGroup"/>
+            <xs:attribute name="title" type="xs:string" default="">
+                <xs:annotation>
+                    <xs:documentation>title text for window</xs:documentation>
+                </xs:annotation>
+            </xs:attribute>
+            <xs:attribute name="width" type="ControlLength" default="auto"/>
+            <xs:attribute name="height" type="ControlLength"/>
+            <xs:attribute name="min-width" type="xs:nonNegativeInteger"/>
+            <xs:attribute name="min-height" type="xs:nonNegativeInteger"/>
+            <xs:attribute name="max-width" type="xs:nonNegativeInteger"/>
+            <xs:attribute name="max-height" type="xs:nonNegativeInteger"/>
+        </xs:complexType>
+    </xs:element>
+
+
+</xs:schema>

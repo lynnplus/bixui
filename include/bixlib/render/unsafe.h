@@ -14,15 +14,26 @@
  * limitations under the License.
  */
 
+#pragma once
 
-#include "frame_window.h"
-#include "bixlib/core/application.h"
+#include "bixlib/export_macro.h"
 
+namespace bix {
+class BIX_PUBLIC UnsafeHandle {
+public:
+    const uintptr_t mUniqueId;
+    explicit UnsafeHandle(uintptr_t id) : mUniqueId(id), mTarget(nullptr) {}
 
-int main(int argc, char* argv[]) {
-    bix::Application app(argc, argv);
-    FrameWindow window;
-    window.setTitle("示例窗口");
-    window.show();
-    return app.run();
+    template <class T>
+    void bind(T** p) {
+        mTarget = reinterpret_cast<void**>(p);
+    }
+
+    void set(void* p) const {
+        *mTarget = p;
+    }
+
+private:
+    void** mTarget;
+};
 }

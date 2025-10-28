@@ -14,15 +14,30 @@
  * limitations under the License.
  */
 
+#pragma once
+#include "control.h"
 
-#include "frame_window.h"
-#include "bixlib/core/application.h"
+namespace bix {
+class BIX_PUBLIC Label : public Control {
+public:
+    BIX_DEFINE_CONTROL_CLASS_NAME(Label)
 
+    void setText(const std::string& str);
+    void setTextSize(int size);
+    // void setTextAlignment();
 
-int main(int argc, char* argv[]) {
-    bix::Application app(argc, argv);
-    FrameWindow window;
-    window.setTitle("示例窗口");
-    window.show();
-    return app.run();
-}
+    void onDraw(Canvas& canvas) override;
+    void discardCanvas() override;
+
+protected:
+    ColorBrushPtr mBrush = nullptr;
+    TextPaintPtr mTextPaint = nullptr;
+
+    std::string mText{};
+    int mTextSize = 12;
+
+    void drawText();
+
+    void setupTextPaint(const Canvas& canvas);
+};
+} // bix

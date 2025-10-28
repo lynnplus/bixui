@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
+#pragma once
+#include "bixlib/core/window.h"
 
-#include "frame_window.h"
-#include "bixlib/core/application.h"
 
-
-int main(int argc, char* argv[]) {
-    bix::Application app(argc, argv);
-    FrameWindow window;
-    window.setTitle("示例窗口");
-    window.show();
-    return app.run();
-}
+class FrameWindow : public bix::Window {
+public:
+    FrameWindow();
+    // [[nodiscard]] std::string uniqueId() const override;
+    // [[nodiscard]] std::string uniqueId() const override;
+    // void setUniqueId(const std::string& id) override;
+    // protected:
+    // bool onClose() override;
+    // void onDestroy() override;
+};

@@ -14,15 +14,30 @@
  * limitations under the License.
  */
 
+#pragma once
 
-#include "frame_window.h"
-#include "bixlib/core/application.h"
+#include "bixlib/geometry.h"
+
+namespace bix {
+enum class WindowEventType {
+    NilEvent,
+    PaintEvent,
+    CloseEvent,
+    DestroyEvent,
+    ClientResizeEvent,
+    EraseBkgndEvent,
+};
 
 
-int main(int argc, char* argv[]) {
-    bix::Application app(argc, argv);
-    FrameWindow window;
-    window.setTitle("示例窗口");
-    window.show();
-    return app.run();
+class WindowEvent {
+public:
+    union WindowEventData {
+        Point<float> point;
+        Size<float> size;
+    };
+
+    WindowEventType ttype = WindowEventType::NilEvent;
+    WindowEventData data{};
+    bool handled = false;
+};
 }

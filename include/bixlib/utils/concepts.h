@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
+#pragma once
+#include <concepts>
+#include <type_traits>
 
-#include "frame_window.h"
-#include "bixlib/core/application.h"
+namespace bix {
+template <typename T>
+concept Arithmetic = std::is_arithmetic_v<T>;
 
+template <typename Dp, typename Bp>
+concept DerivedFrom = std::derived_from<Dp, Bp>;
 
-int main(int argc, char* argv[]) {
-    bix::Application app(argc, argv);
-    FrameWindow window;
-    window.setTitle("示例窗口");
-    window.show();
-    return app.run();
+template <typename T>
+concept FloatType = std::is_floating_point_v<T>;
 }

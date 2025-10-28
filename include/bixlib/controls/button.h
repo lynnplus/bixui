@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
+#pragma once
+#include "control.h"
 
-#include "frame_window.h"
-#include "bixlib/core/application.h"
+namespace bix {
+class BIX_PUBLIC Button : public Control {
+public:
+    void discardCanvas() override;
 
+protected:
+    void onDraw(Canvas& canvas) override;
 
-int main(int argc, char* argv[]) {
-    bix::Application app(argc, argv);
-    FrameWindow window;
-    window.setTitle("示例窗口");
-    window.show();
-    return app.run();
-}
+private:
+    // ColorBrushPtr mBrush=nullptr;
+};
+} // bix

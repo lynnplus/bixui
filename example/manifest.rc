@@ -1,0 +1,3 @@
+#include <winuser.h>
+#include "resources.h"
+RESID_MANIFEST RT_MANIFEST "example.manifest"

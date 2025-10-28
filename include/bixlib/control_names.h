@@ -14,15 +14,16 @@
  * limitations under the License.
  */
 
+#pragma once
 
-#include "frame_window.h"
-#include "bixlib/core/application.h"
+#include <string>
 
+#define BIX_CTRL_CONTROL ("Control")
+#define BIX_CTRL_LAYOUT ("Layout")
+#define BIX_CTRL_LABEL ("Label")
 
-int main(int argc, char* argv[]) {
-    bix::Application app(argc, argv);
-    FrameWindow window;
-    window.setTitle("示例窗口");
-    window.show();
-    return app.run();
+namespace bix::names {
+const std::string ClsNameControl{"Control"};
+const std::string ClsNameLayout{"Layout"};
+const std::string ClsNameLabel{"Label"};
 }

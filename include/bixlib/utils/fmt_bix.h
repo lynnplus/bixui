@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
+#pragma once
 
-#include "frame_window.h"
-#include "bixlib/core/application.h"
+#include <fmt/format.h>
 
+#include "bixlib/geometry/rectangle.h"
 
-int main(int argc, char* argv[]) {
-    bix::Application app(argc, argv);
-    FrameWindow window;
-    window.setTitle("示例窗口");
-    window.show();
-    return app.run();
+namespace bix {
+inline auto format_as(const UIRect& r) {
+    return fmt::format("Rect(x:{} y:{} w:{} h:{})", r.left(), r.top(), r.width(), r.height());
+}
+
+inline auto format_as(const UISize& r) {
+    return fmt::format("Size(w:{} h:{})", r.width, r.height);
+}
 }

@@ -14,15 +14,7 @@
  * limitations under the License.
  */
 
+#pragma once
 
-#include "frame_window.h"
-#include "bixlib/core/application.h"
+#define RESID_MANIFEST 1
 
-
-int main(int argc, char* argv[]) {
-    bix::Application app(argc, argv);
-    FrameWindow window;
-    window.setTitle("示例窗口");
-    window.show();
-    return app.run();
-}

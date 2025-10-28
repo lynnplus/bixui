@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2025 Lynn <lynnplus90@gmail.com>.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="bixlib"
+           xmlns="bixlib"
+           elementFormDefault="qualified">
+
+    <xs:simpleType name="EnumLength">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="auto">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Adaptive length equals fixed value -1</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="full">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Fill control length with parent container length</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Percentage">
+        <xs:restriction base="xs:string">
+            <!--[0%,100%]-->
+            <xs:pattern value="(100|([1-9][0-9]|[0-9]))%"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Percentage_2">
+        <!--[0.00%,100.00%]-->
+        <xs:restriction base="xs:string">
+            <xs:pattern value="(100(\.0{1,2})?|(\d{1,2}(\.\d{1,2})?))%"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="Percentage_float">
+        <xs:annotation>
+            <xs:documentation>float:0.00-1.00</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:decimal">
+            <!--[0.00%,100.00%]-->
+            <xs:minInclusive value="0"/>
+            <xs:maxInclusive value="1"/>
+            <xs:fractionDigits value="2"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="ControlLength">
+        <xs:annotation>
+            <xs:documentation>控件长度，支持auto、full，百分比和纯数字</xs:documentation>
+        </xs:annotation>
+        <xs:union memberTypes="xs:nonNegativeInteger EnumLength Percentage"/>
+    </xs:simpleType>
+
+    <xs:simpleType name="VisibleGone">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="gone"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="VisibleValue">
+        <xs:annotation>
+            <xs:documentation>set control visible</xs:documentation>
+        </xs:annotation>
+        <xs:union memberTypes="xs:boolean VisibleGone"/>
+    </xs:simpleType>
+
+</xs:schema>

@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
+#pragma once
+#include "layout.h"
 
-#include "frame_window.h"
-#include "bixlib/core/application.h"
+namespace bix {
+class BIX_PUBLIC LinearLayout : public Layout {
+public:
+    // void update(const UIRect& pos) override;
 
 
-int main(int argc, char* argv[]) {
-    bix::Application app(argc, argv);
-    FrameWindow window;
-    window.setTitle("示例窗口");
-    window.show();
-    return app.run();
-}
+    void setOrientation(bool horizontal);
+
+protected:
+    // void onLayout(const UIRect& rect) override;
+    void onLayout(const UIRect& rect) override;
+
+private:
+    //orientation="horizontal
+    bool mIsHorizontal = false;
+};
+} // bix

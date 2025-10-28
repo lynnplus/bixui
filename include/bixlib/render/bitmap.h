@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-
-#include "frame_window.h"
-#include "bixlib/core/application.h"
+#pragma once
 
 
-int main(int argc, char* argv[]) {
-    bix::Application app(argc, argv);
-    FrameWindow window;
-    window.setTitle("示例窗口");
-    window.show();
-    return app.run();
+namespace bix {
+class Bitmap {
+public:
+};
 }

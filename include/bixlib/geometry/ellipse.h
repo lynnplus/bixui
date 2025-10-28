@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
+#pragma once
 
-#include "frame_window.h"
-#include "bixlib/core/application.h"
+#include "bixlib/geometry/point.h"
 
-
-int main(int argc, char* argv[]) {
-    bix::Application app(argc, argv);
-    FrameWindow window;
-    window.setTitle("示例窗口");
-    window.show();
-    return app.run();
+namespace bix {
+template <Arithmetic T>
+struct BIX_PUBLIC Ellipse {
+    Point<T> point;
+    T radiusX;
+    T radiusY;
+};
 }

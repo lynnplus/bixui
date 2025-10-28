@@ -15,14 +15,17 @@
  */
 
 
-#include "frame_window.h"
-#include "bixlib/core/application.h"
+#pragma once
 
+#include "bixlib/utils/concepts.h"
+#include "bixlib/export_macro.h"
 
-int main(int argc, char* argv[]) {
-    bix::Application app(argc, argv);
-    FrameWindow window;
-    window.setTitle("示例窗口");
-    window.show();
-    return app.run();
+namespace bix {
+template <Arithmetic T>
+struct BIX_PUBLIC Point {
+    T x, y;
+
+    Point() : x(0), y(0) {}
+    Point(T x_, T y_) : x(x_), y(y_) {}
+};
 }

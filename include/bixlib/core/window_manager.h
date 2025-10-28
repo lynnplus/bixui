@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-
-#include "frame_window.h"
-#include "bixlib/core/application.h"
+#pragma once
 
 
-int main(int argc, char* argv[]) {
-    bix::Application app(argc, argv);
-    FrameWindow window;
-    window.setTitle("示例窗口");
-    window.show();
-    return app.run();
-}
+#include "window.h"
+
+namespace bix {
+class WindowManager {
+public:
+    // static void registerWindow(Window* window);
+    // static void getAllWindow();
+    static DisplayPtr defaultDisplay();
+
+    static void setDisplayStrategy(DisplayStrategyCRef strategy);
+    static DisplayStrategyPtr displayStrategy();
+};
+} // bix

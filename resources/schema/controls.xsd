@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2025 Lynn <lynnplus90@gmail.com>.
+  ~
+  ~ Licensed under the Apache License, Version 2.0 (the "License");
+  ~ you may not use this file except in compliance with the License.
+  ~ You may obtain a copy of the License at
+  ~
+  ~     http://www.apache.org/licenses/LICENSE-2.0
+  ~
+  ~ Unless required by applicable law or agreed to in writing, software
+  ~ distributed under the License is distributed on an "AS IS" BASIS,
+  ~ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  ~ See the License for the specific language governing permissions and
+  ~ limitations under the License.
+  -->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           targetNamespace="bixlib"
+           xmlns="bixlib"
+
+           elementFormDefault="qualified">
+    <xs:include schemaLocation="data_type.xsd"/>
+    <xs:include schemaLocation="basic_attrs.xsd"/>
+    <xs:group name="singleControlGroup">
+        <xs:choice>
+            <xs:element name="Button" type="xs:string"/>
+            <xs:element name="Label">
+                <xs:complexType>
+                    <xs:simpleContent>
+                        <xs:extension base="xs:string">
+                            <xs:attribute name="value" type="xs:string" use="required"/>
+                        </xs:extension>
+                    </xs:simpleContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="Switch" type="xs:string"/>
+        </xs:choice>
+    </xs:group>
+
+
+    <xs:group name="layoutGroup">
+        <xs:choice>
+            <xs:element name="Layout" type="layoutType"/>
+            <xs:element name="LinearLayout" type="linearLayoutType"/>
+            <xs:element name="FlexLayout" type="flexLayoutType"/>
+        </xs:choice>
+    </xs:group>
+
+
+    <xs:complexType name="layoutType">
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:group ref="singleControlGroup" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:group ref="layoutGroup" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:choice>
+        <xs:attributeGroup ref="basicAttrGroup"/>
+    </xs:complexType>
+
+    <xs:complexType name="linearLayoutType">
+        <xs:annotation>
+            <xs:documentation>The UI interface has a linear layout, supporting both vertical and horizontal modes, with
+                horizontal being the default.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:complexContent>
+            <xs:extension base="layoutType">
+
+                <xs:attribute name="horizontal" type="xs:boolean" default="false">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">Enable horizontal layout</xs:documentation>
+                        <xs:documentation xml:lang="zh-CN">使用水平布局</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="flexLayoutType">
+        <xs:complexContent>
+            <xs:extension base="layoutType">
+
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="AttrElement" mixed="true">
+        <xs:attribute name="value" type="xs:string">
+        </xs:attribute>
+    </xs:complexType>
+
+
+    <xs:complexType name="labelType">
+
+        <xs:choice>
+
+            <!--            <xs:attribute name="text" type="xs:string"/>-->
+        </xs:choice>
+        <xs:attributeGroup ref="basicAttrGroup"/>
+    </xs:complexType>
+
+</xs:schema>
