@@ -16,6 +16,11 @@
 
 #pragma once
 
+#include "bixlib/render/color.h"
+#include "bixlib/render/unsafe.h"
+
+#include <vector>
+
 namespace bix {
 enum class LineStyle {
     Solid,
@@ -40,33 +45,32 @@ enum class LineJoinStyle {
     MiterOrBevel = 3
 };
 
-
 class BIX_PUBLIC Pen {
 public:
     virtual ~Pen() = default;
-    virtual void setColor(const Color& c) =0;
-    virtual void setStrokeWidth(int w) =0;
-    virtual void setLineStyle(LineStyle style) =0;
-    virtual void setLineJoin(LineJoinStyle lineJoin) =0;
-    virtual void setLineCap(CapStyle start, CapStyle end, CapStyle dash) =0;
-    virtual void setStartCap(CapStyle start) =0;
-    virtual void setEndCap(CapStyle end) =0;
-    virtual void setDashCap(CapStyle dash) =0;
-    virtual void setMiterLimit(float limit) =0;
-    virtual void setDashOffset(float dashOffset) =0;
+    virtual void setColor(const Color& c) = 0;
+    virtual void setStrokeWidth(int w) = 0;
+    virtual void setLineStyle(LineStyle style) = 0;
+    virtual void setLineJoin(LineJoinStyle lineJoin) = 0;
+    virtual void setLineCap(CapStyle start, CapStyle end, CapStyle dash) = 0;
+    virtual void setStartCap(CapStyle start) = 0;
+    virtual void setEndCap(CapStyle end) = 0;
+    virtual void setDashCap(CapStyle dash) = 0;
+    virtual void setMiterLimit(float limit) = 0;
+    virtual void setDashOffset(float dashOffset) = 0;
     /**
-     * Set the floating point array of custom dash. Using this method, LineStyle will be automatically set to CustomDash.
+     * Set the floating point array of custom dash. Using this method, LineStyle will be automatically set to
+     * CustomDash.
      * @param dashes
      */
-    virtual void setCustomDash(const std::vector<float>& dashes) =0;
+    virtual void setCustomDash(const std::vector<float>& dashes) = 0;
 
-    [[nodiscard]]
-    virtual const Color& color() const noexcept =0;
-    [[nodiscard]]
-    virtual int strokeWidth() const noexcept =0;
+    virtual const Color& color() const noexcept = 0;
 
-    virtual bool handle(UnsafeHandle& p) noexcept =0;
+    virtual int strokeWidth() const noexcept = 0;
+
+    virtual bool handle(UnsafeHandle& p) noexcept = 0;
 };
 
 using PenPtr = std::unique_ptr<Pen>;
-} // bix
+} // namespace bix

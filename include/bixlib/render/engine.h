@@ -16,9 +16,8 @@
 
 #pragma once
 
-
-#include "canvas.h"
 #include "bixlib/core/window.h"
+#include "bixlib/render/canvas.h"
 
 namespace bix {
 class BIX_PUBLIC RenderEngine {
@@ -35,13 +34,10 @@ public:
 
     static RenderEngine* from(Type t);
 
-    virtual void shutdown() noexcept =0;
+    virtual void shutdown() noexcept = 0;
 
-    [[nodiscard]]
-    virtual Type type() const noexcept =0;
+    virtual Type type() const noexcept = 0;
 
-    virtual CanvasPtr createCanvas(const Window& w) =0;
+    virtual CanvasPtr createCanvas(const Window& w) = 0;
 };
-}
-
-
+} // namespace bix

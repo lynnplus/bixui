@@ -1,13 +1,24 @@
 cmake_minimum_required(VERSION 3.26)
 
 project(bixlib VERSION 0.0.1 LANGUAGES CXX)
+
+#include(CMakeDependentOption)
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
 set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 
+option(BUILD_STATIC "build static library" ON)
+if (CMAKE_SYSTEM_NAME MATCHES "Windows")
+    option(bix_RENDER_WITH_D2D "support d2d as renderer" ON)
+    option(bix_RENDER_WITH_GDIPlus "support gdi+ as renderer" ON)
+endif ()
+
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
 file(GLOB_RECURSE sourcesFiles RELATIVE ${PROJECT_SOURCE_DIR} modules/*.cpp modules/*.h)
+
 
 add_library(bix STATIC ${sourcesFiles})
 
@@ -25,8 +36,13 @@ set_target_properties(bix PROPERTIES
         DEBUG_POSTFIX "_d"
 )
 
-target_compile_definitions(bix PRIVATE WIN32_LEAN_AND_MEAN)
-#target_compile_definitions(bix PUBLIC WINVER=0xA00 _WIN32_WINNT=0xA00)
+if (CMAKE_SYSTEM_NAME MATCHES "Windows")
+    target_compile_definitions(bix PRIVATE WIN32_LEAN_AND_MEAN)
+    #target_compile_definitions(bix PUBLIC WINVER=0xA00 _WIN32_WINNT=0xA00)
+    if (bix_RENDER_WITH_D2D)
+        target_link_libraries(bix PRIVATE d2d1.lib dwrite.lib)
+    endif ()
+endif ()
 
 if (MSVC)
     target_compile_definitions(bix PUBLIC "UNICODE" "_UNICODE" PRIVATE "NOMINMAX")
@@ -35,10 +51,10 @@ else ()
     target_compile_options(bix PUBLIC "-municode" PRIVATE
             "-Wall" "-Wextra" "-pedantic" "-Wconversion" "-Wshadow" "-Wnonnull" "-Wfloat-equal" "-Werror"
             "-pedantic-errors" "-Wold-style-cast" "-Wundef" "-Wzero-as-null-pointer-constant" "-Wnull-dereference"
-            "-Wdeprecated" "-Wweak-vtables" "-Woverloaded-virtual" "-Wcast-qual" "-Wwrite-strings" "-Wpointer-arith"
+            "-Wdeprecated" "-Woverloaded-virtual" "-Wcast-qual" "-Wwrite-strings" "-Wpointer-arith"
             "-Wmissing-include-dirs" "-Wzero-as-null-pointer-constant"
-            "-Wpre-c++20-compat-pedantic" "-Wreserved-identifier" "-Wmissing-field-initializers" "-Wuninitialized"
-            #            -Weverything
+            "-Wmissing-field-initializers" "-Wuninitialized"
+            #            -Weverything "-Wpre-c++20-compat-pedantic" "-Wreserved-identifier"
     )
 endif ()
 
@@ -49,10 +65,11 @@ target_include_directories(bix PUBLIC
 )
 
 include(cmake/FetchFmt.cmake)
-target_link_libraries(bix PUBLIC fmt::fmt)
+target_link_libraries(bix PRIVATE fmt::fmt)
 
-target_precompile_headers(bix PUBLIC <fmt/base.h> <fmt/std.h>)
+include(cmake/FetchTinyXml.cmake)
+target_link_libraries(bix PRIVATE tinyxml2)
 
-target_link_libraries(bix PRIVATE d2d1.lib dwrite.lib)
+#target_precompile_headers(bix PUBLIC <fmt/base.h> <fmt/std.h>)
 
 add_subdirectory(example)

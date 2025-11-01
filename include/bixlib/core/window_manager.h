@@ -16,11 +16,10 @@
 
 #pragma once
 
-
 #include "window.h"
 
 namespace bix {
-class WindowManager {
+class WindowManager final {
 public:
     // static void registerWindow(Window* window);
     // static void getAllWindow();
@@ -29,4 +28,4 @@ public:
     static void setDisplayStrategy(DisplayStrategyCRef strategy);
     static DisplayStrategyPtr displayStrategy();
 };
-} // bix
+} // namespace bix

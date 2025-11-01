@@ -1,0 +1,28 @@
+BasedOnStyle: LLVM
+IndentWidth: 4
+AccessModifierOffset: -4
+ColumnLimit: 120
+UseTab: Never
+Standard: c++20
+PointerAlignment: Left
+AllowShortEnumsOnASingleLine: false
+AlignEscapedNewlines: LeftWithLastLine
+NamespaceIndentation: None
+IndentRequiresClause: false
+BreakTemplateDeclarations: Yes
+IndentPPDirectives: BeforeHash
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^"(llvm|llvm-c|clang|clang-c)/'
+    Priority: 2
+    SortPriority: 0
+    CaseSensitive: false
+  - Regex: '^(<|"(gtest|gmock|isl|json)/)'
+    Priority: 3
+    SortPriority: 0
+    CaseSensitive: false
+  - Regex: '.*'
+    Priority: 1
+    SortPriority: 0
+    CaseSensitive: false
+IncludeIsMainRegex: '(Test)?$'

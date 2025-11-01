@@ -16,13 +16,12 @@
 
 #pragma once
 
-
-#include <memory>
-
-#include "display.h"
-#include "bixlib/export_macro.h"
 #include "bixlib/controls/layout.h"
 #include "bixlib/controls/length.h"
+#include "bixlib/core/display.h"
+#include "bixlib/export_macro.h"
+
+#include <memory>
 
 namespace bix {
 class WindowPrivate;
@@ -40,7 +39,6 @@ public:
     Window();
     virtual ~Window();
 
-    [[nodiscard]]
     intptr_t nativeHandle() const;
 
     void show();
@@ -57,23 +55,20 @@ public:
     void moveToCenter();
     void setTitle(const std::string& title);
 
-
-    [[nodiscard]]
     WindowPrivate* getImpl() const;
 
-    [[nodiscard]]
     std::string title() const;
-    [[nodiscard]]
+
     std::string uniqueId() const;
     void setUniqueId(const std::string& id);
     void setDisplayStrategy(DisplayStrategyCRef strategy);
-    [[nodiscard]]
+
     DisplayStrategyPtr displayStrategy() const;
-    [[nodiscard]]
+
     DisplayPtr display() const;
 
 protected:
-    //listening
+    // listening
     virtual void onBuildFinish() {}
     virtual void onCreate() {}
     virtual void onAttach() {}
@@ -89,4 +84,4 @@ private:
     friend class WindowPrivate;
     std::unique_ptr<WindowPrivate> mPrivate;
 };
-}
+} // namespace bix

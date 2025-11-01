@@ -15,7 +15,7 @@
  */
 
 #pragma once
-#include "control.h"
+#include "bixlib/controls/control.h"
 
 namespace bix {
 class BIX_PUBLIC Button : public Control {
@@ -28,4 +28,4 @@ protected:
 private:
     // ColorBrushPtr mBrush=nullptr;
 };
-} // bix
+} // namespace bix

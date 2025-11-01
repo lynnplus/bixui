@@ -15,7 +15,7 @@
  */
 
 #pragma once
-#include "bixlib/geometry.h"
+
 #include "bixlib/render/canvas.h"
 
 namespace bix {
@@ -25,7 +25,7 @@ public:
 
     void setVisible(bool visible);
     void setBounds(const UIRect& bounds);
-    [[nodiscard]]
+
     const UIRect& bounds() const;
 
 

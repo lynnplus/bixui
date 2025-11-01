@@ -15,16 +15,19 @@
  */
 
 #pragma once
-#include <string>
-
 #include "bixlib/common.h"
 #include "bixlib/export_macro.h"
 #include "bixlib/utils/numeric.h"
 
+#include <string>
+
 namespace bix {
 class BIX_PUBLIC Color {
 public:
-    enum Spec { Invalid, Rgba, };
+    enum Spec {
+        Invalid,
+        Rgba,
+    };
 
     constexpr Color() = default;
 
@@ -47,46 +50,32 @@ public:
     static Color fromHexString(const std::string& str);
 
     static constexpr bool isRgbaValid(int r, int g, int b, int a = 255) noexcept {
-        if (r < 0 || g < 0 || b < 0 || a < 0) return false;
+        if (r < 0 || g < 0 || b < 0 || a < 0)
+            return false;
         return r <= 255 && g <= 255 && b <= 255 && a <= 255;
     }
 
-    [[nodiscard]]
-    constexpr bool isValid() const noexcept {
-        return mSpec != Invalid;
-    }
+    constexpr bool isValid() const noexcept { return mSpec != Invalid; }
 
-    [[nodiscard]]
-    int red() const noexcept {
-        return data[0];
-    }
+    int red() const noexcept { return data[0]; }
 
-    [[nodiscard]]
-    int green() const noexcept {
-        return data[1];
-    }
+    int green() const noexcept { return data[1]; }
 
-    [[nodiscard]]
-    int blue() const noexcept {
-        return data[2];
-    }
+    int blue() const noexcept { return data[2]; }
 
-    [[nodiscard]]
-    int alpha() const noexcept {
-        return data[3];
-    }
+    int alpha() const noexcept { return data[3]; }
 
 protected:
     Spec mSpec = Invalid;
-    //r g b a pad
+    // r g b a pad
     uint8_t data[5]{0, 0, 0, 0, 0};
 };
 
 namespace colors {
-    constexpr inline Color White{255, 255, 255};
-    constexpr inline Color Black{0, 0, 0};
-    constexpr inline Color Red{255, 0, 0};
-    constexpr inline Color Green{0, 255, 0};
-    constexpr inline Color Blue{0, 0, 255};
-}
-}
+constexpr inline Color White{255, 255, 255};
+constexpr inline Color Black{0, 0, 0};
+constexpr inline Color Red{255, 0, 0};
+constexpr inline Color Green{0, 255, 0};
+constexpr inline Color Blue{0, 0, 255};
+} // namespace colors
+} // namespace bix

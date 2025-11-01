@@ -27,4 +27,7 @@ concept DerivedFrom = std::derived_from<Dp, Bp>;
 
 template <typename T>
 concept FloatType = std::is_floating_point_v<T>;
-}
+
+template <class T>
+concept EnumType = std::is_enum_v<T>;
+} // namespace bix

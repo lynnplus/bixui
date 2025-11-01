@@ -25,4 +25,4 @@ struct BIX_PUBLIC Ellipse {
     T radiusX;
     T radiusY;
 };
-}
+} // namespace bix

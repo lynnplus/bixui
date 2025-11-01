@@ -16,19 +16,17 @@
 
 #pragma once
 
-#include <string>
-
-#include "drawable.h"
-#include "length.h"
 #include "bixlib/control_names.h"
+#include "bixlib/controls/drawable.h"
+#include "bixlib/controls/length.h"
+#include "bixlib/parser/attribute_set.h"
 
+#include <string>
 
 #define BIX_CTRL_NAME(name) bix::names::ClsName##name
 
-#define BIX_DEFINE_CONTROL_CLASS_NAME(name) \
-[[nodiscard]] const std::string& className() const override { \
-return BIX_CTRL_NAME(name); \
-}
+#define BIX_DEFINE_CONTROL_CLASS_NAME(name)                                       \
+    const std::string& className() const override { return BIX_CTRL_NAME(name); }
 
 namespace bix {
 // Flags used for controlling the paint
@@ -45,57 +43,52 @@ enum class VisibleFlag {
     Invisible,
 };
 
-// struct RoundedRect {
-//     UIRect rect{};
-//     int radiusX{};
-//     int radiusY{};
-// };
+inline bool parseToVisibleFlag(const std::string& str, VisibleFlag& val) {
+    if (str == "gone") {
+        val = VisibleFlag::Gone;
+    } else if (str == "visible") {
+        val = VisibleFlag::Visible;
+    } else if (str == "invisible") {
+        val = VisibleFlag::Invisible;
+    } else {
+        return false;
+    }
+    return true;
+}
 
-
-struct Border {
-    Color color{};
-    int width{};
-    int radiusX{};
-    int radiusY{};
+struct BIX_PUBLIC Border {
+    LineStyle lineStyle;
+    Color color;
+    int width;
+    int radius;
 };
-
 
 class BIX_PUBLIC Control {
 public:
     virtual ~Control() = default;
 
-
-    [[nodiscard]]
     virtual Control* parent() const;
 
-
     //******************getter****************//
-    const std::string& name() const noexcept;
-    // [[nodiscard]] const std::string& name() const;
+    const std::string& id() const noexcept;
+    // const std::string& name() const;
     VisibleFlag visible() const noexcept;
     const UIRect& margin() const noexcept;
     const UISize& measuredSize() const noexcept;
     const UIRect& padding() const noexcept;
     bool enabled() const noexcept;
 
-
     virtual bool isContainer() const;
 
-    [[nodiscard]]
-    virtual const std::string& className() const {
-        return BIX_CTRL_NAME(Control);
-    }
+    virtual const std::string& className() const { return BIX_CTRL_NAME(Control); }
 
-
-    //set the current control to invalidate and trigger the redraw command
+    // set the current control to invalidate and trigger the redraw command
     void invalidate();
-
 
     void setParent(Control* parent);
 
-
     //******************set attrs********************//
-    void setName(const std::string& name);
+    void setId(const std::string& id);
     void setMargin(const UIRect& margin);
     void setMargin(int v) { setMargin(UIRect(v, v, v, v)); }
     void setPadding(const UIRect& padding);
@@ -110,7 +103,7 @@ public:
     void setBorder(const Border& border);
     void setBorderWidth(int width);
 
-    //Trim the drawing range of the control and do not draw beyond the range.
+    // Trim the drawing range of the control and do not draw beyond the range.
     void setBoundsClip(bool enable);
     /**
      *
@@ -118,11 +111,15 @@ public:
      */
     void setAlpha(int alpha);
 
-
     virtual void setBackground(const Color& color);
     virtual void setBackground(DrawablePtr drawable);
 
     virtual void discardCanvas();
+    /**
+     * Apply styles or attributes to control
+     * @param attrs
+     */
+    virtual void applyAttributes(const AttributeSet& attrs);
 
 protected:
     friend class ControlHelper;
@@ -138,11 +135,10 @@ protected:
     UISize mMinSize{};
     SpecSize mSize{};
     UISize mMeasuredSize{};
-    Border mBorder{colors::Black, 0};
+    Border mBorder{LineStyle::Solid, colors::Black, 0, 0};
 
     Transform mPosTransform{};
-    std::string mName{};
-
+    std::string mId{};
 
     // virtual void onRenderCreated(Canvas* renderer){BIX_UNUSED(renderer)}
 
@@ -162,8 +158,8 @@ protected:
 private:
     DrawablePtr mBackground = nullptr;
     PenPtr mBorderPen = nullptr;
-    void draw(Canvas* renderer);
+    void draw(Canvas& renderer);
 };
 
 using ControlPtr = std::unique_ptr<Control>;
-} // bix
+} // namespace bix

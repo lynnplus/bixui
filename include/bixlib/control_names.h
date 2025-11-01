@@ -23,7 +23,7 @@
 #define BIX_CTRL_LABEL ("Label")
 
 namespace bix::names {
-const std::string ClsNameControl{"Control"};
-const std::string ClsNameLayout{"Layout"};
-const std::string ClsNameLabel{"Label"};
-}
+const std::string ClsNameControl{BIX_CTRL_CONTROL};
+const std::string ClsNameLayout{BIX_CTRL_LAYOUT};
+const std::string ClsNameLabel{BIX_CTRL_LABEL};
+} // namespace bix::names

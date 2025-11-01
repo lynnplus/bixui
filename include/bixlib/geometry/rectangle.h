@@ -16,7 +16,6 @@
 
 #pragma once
 
-
 #include "bixlib/geometry/point.h"
 #include "bixlib/geometry/size.h"
 
@@ -24,7 +23,7 @@ namespace bix {
 template <Arithmetic T>
 class BIX_PUBLIC Rect {
 public:
-    T x1, y1, x2, y2; //left top right bottom
+    T x1, y1, x2, y2; // left top right bottom
 
     Rect() {
         x1 = y1 = 0;
@@ -45,30 +44,31 @@ public:
         y2 = t + size.height;
     }
 
-    [[nodiscard]] T width() const noexcept { return x2 - x1; }
-    [[nodiscard]] T height() const noexcept { return y2 - y1; }
-    [[nodiscard]] T left() const noexcept { return x1; }
-    [[nodiscard]] T top() const noexcept { return y1; }
-    [[nodiscard]] T right() const noexcept { return x2; }
-    [[nodiscard]] T bottom() const noexcept { return y2; }
+    T width() const noexcept { return x2 - x1; }
+    T height() const noexcept { return y2 - y1; }
+    T left() const noexcept { return x1; }
+    T top() const noexcept { return y1; }
+    T right() const noexcept { return x2; }
+    T bottom() const noexcept { return y2; }
 
-    [[nodiscard]] Point<T> lt() const noexcept { return {x1, y1}; }
-    [[nodiscard]] Point<T> rb() const noexcept { return {x2, y2}; }
-    [[nodiscard]] Point<T> center() const { return Point((x1 + x2) / 2, (y1 + y2) / 2); }
-    [[nodiscard]] Size<T> size() const { return Size(width(), height()); }
+    Point<T> lt() const noexcept { return {x1, y1}; }
+    Point<T> rb() const noexcept { return {x2, y2}; }
+    Point<T> center() const { return Point((x1 + x2) / 2, (y1 + y2) / 2); }
+    Size<T> size() const { return Size(width(), height()); }
 
-    template <typename =std::is_integral<T>>
-    [[nodiscard]] bool isEmpty() const noexcept { return width() <= 0 || height() <= 0; }
-
-    template <typename =std::is_integral<T>>
-    [[nodiscard]]
-    bool isValid() const { return x1 <= x2 && y1 <= y2; }
-
-    void clear() {
-        x1 = y1 = x2 = y2 = 0;
+    template <typename = std::is_integral<T>>
+    bool isEmpty() const noexcept {
+        return width() <= 0 || height() <= 0;
     }
 
-    [[nodiscard]]
+    template <typename = std::is_integral<T>>
+
+    bool isValid() const {
+        return x1 <= x2 && y1 <= y2;
+    }
+
+    void clear() { x1 = y1 = x2 = y2 = 0; }
+
     Rect<int> aligned() const {
         int xmin = numeric_cast<int>(floor(x1));
         int xmax = numeric_cast<int>(ceil(x2));
@@ -77,7 +77,6 @@ public:
         return {xmin, ymin, xmax, ymax};
     }
 
-    [[nodiscard]]
     Rect<float> centerScale(float factor) const {
         auto dw = numeric_cast<float>(x2 - x1) * factor / 2.f;
         auto dh = numeric_cast<float>(y2 - y1) * factor / 2.f;
@@ -86,12 +85,8 @@ public:
         return {cx - dw, cy - dh, cx + dw, cy + dh};
     }
 
-    [[nodiscard]]
     Rect<float> floated() const {
-        return {
-            numeric_cast<float>(x1), numeric_cast<float>(y1),
-            numeric_cast<float>(x2), numeric_cast<float>(y2)
-        };
+        return {numeric_cast<float>(x1), numeric_cast<float>(y1), numeric_cast<float>(x2), numeric_cast<float>(y2)};
     }
 
     Rect& setSize(const Size<T>& v) {
@@ -124,19 +119,15 @@ public:
         return *this;
     }
 
-    Rect<float> operator *(float v) const noexcept {
-        return {
-            numeric_cast<float>(x1) * v, numeric_cast<float>(y1) * v, numeric_cast<float>(x2) * v,
-            numeric_cast<float>(y2) * v
-        };
+    Rect<float> operator*(float v) const noexcept {
+        return {numeric_cast<float>(x1) * v, numeric_cast<float>(y1) * v, numeric_cast<float>(x2) * v,
+                numeric_cast<float>(y2) * v};
     }
 
-    //translate
-    constexpr Rect operator+(const Point<T>& p) const noexcept {
-        return {x1 + p.x, y1 + p.y, x2 + p.x, y2 + p.y};
-    }
+    // translate
+    constexpr Rect operator+(const Point<T>& p) const noexcept { return {x1 + p.x, y1 + p.y, x2 + p.x, y2 + p.y}; }
 
-    //translate
+    // translate
     constexpr Rect& operator+=(const Point<T>& p) noexcept {
         x1 += p.x;
         y1 += p.y;
@@ -145,7 +136,7 @@ public:
         return *this;
     }
 
-    constexpr Rect operator +(const Rect& rhs) const noexcept {
+    constexpr Rect operator+(const Rect& rhs) const noexcept {
         return {x1 - rhs.x1, y1 - rhs.y1, x2 + rhs.x2, y2 + rhs.y2};
     }
 
@@ -153,9 +144,9 @@ public:
         return {x1 + rhs.x1, y1 + rhs.y1, x2 - rhs.x2, y2 - rhs.y2};
     }
 
-    constexpr Rect operator +(const Size<T>& rhs) const noexcept {
-        return {x1, y1, x2 + rhs.width, y2 + rhs.height};
-    }
+    constexpr Rect operator-(T margin) noexcept { return {x1 += margin, y1 += margin, x2 -= margin, y2 -= margin}; }
+
+    constexpr Rect operator+(const Size<T>& rhs) const noexcept { return {x1, y1, x2 + rhs.width, y2 + rhs.height}; }
 
     constexpr Rect& operator+=(const Size<T>& s) noexcept {
         x2 += s.width;
@@ -163,16 +154,16 @@ public:
         return *this;
     }
 
-    constexpr bool operator ==(const Rect& rhs) const noexcept {
-        if constexpr (std::is_integral_v < T >) {
+    constexpr bool operator==(const Rect& rhs) const noexcept {
+        if constexpr (std::is_integral_v<T>) {
             return x1 == rhs.x1 && y1 == rhs.y1 && x2 == rhs.x2 && y2 == rhs.y2;
         } else {
-            return fuzzyCompareEqual(x1, rhs.x1) && fuzzyCompareEqual(y1, rhs.y1) &&
-                fuzzyCompareEqual(x2, rhs.x2) && fuzzyCompareEqual(y2, rhs.y2);
+            return fuzzyCompareEqual(x1, rhs.x1) && fuzzyCompareEqual(y1, rhs.y1) && fuzzyCompareEqual(x2, rhs.x2) &&
+                   fuzzyCompareEqual(y2, rhs.y2);
         }
     }
 };
 
 using UIRect = Rect<int>;
 using RectF = Rect<float>;
-}
+} // namespace bix

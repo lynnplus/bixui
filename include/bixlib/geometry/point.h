@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-
 #pragma once
 
-#include "bixlib/utils/concepts.h"
 #include "bixlib/export_macro.h"
+#include "bixlib/utils/concepts.h"
 
 namespace bix {
 template <Arithmetic T>
@@ -28,4 +27,12 @@ struct BIX_PUBLIC Point {
     Point() : x(0), y(0) {}
     Point(T x_, T y_) : x(x_), y(y_) {}
 };
-}
+
+template <Arithmetic T>
+struct BIX_PUBLIC LineSegment {
+    Point<T> p0, p1;
+};
+
+using UIPoint = Point<int>;
+using UILine = LineSegment<int>;
+} // namespace bix

@@ -15,10 +15,11 @@
  */
 
 #pragma once
-#include <memory>
 
-#include "unsafe.h"
 #include "bixlib/render/color.h"
+#include "bixlib/render/unsafe.h"
+
+#include <memory>
 
 namespace bix {
 enum class BrushStyle {
@@ -31,23 +32,22 @@ class BIX_PUBLIC Brush {
 public:
     virtual ~Brush() = default;
 
-    virtual void setOpacity(float opacity) =0;
-    [[nodiscard]] virtual float opacity() const noexcept =0;
-    [[nodiscard]] virtual BrushStyle style() const noexcept =0;
-    virtual bool handle(UnsafeHandle& p) noexcept =0;
+    virtual void setOpacity(float opacity) = 0;
+    virtual float opacity() const noexcept = 0;
+    virtual BrushStyle style() const noexcept = 0;
+    virtual bool handle(UnsafeHandle& p) noexcept = 0;
 };
-
+using BrushPtr = std::unique_ptr<Brush>;
 
 class BIX_PUBLIC ColorBrush : public Brush {
 public:
-    virtual void setColor(const Color& color) =0;
-    [[nodiscard]] virtual Color color() const noexcept =0;
-
-    [[nodiscard]] BrushStyle style() const noexcept override {
-        return BrushStyle::SolidColor;
-    }
+    virtual void setColor(const Color& color) = 0;
+    virtual Color color() const noexcept = 0;
+    BrushStyle style() const noexcept override { return BrushStyle::SolidColor; }
 };
-
-using BrushPtr = std::unique_ptr<Brush>;
 using ColorBrushPtr = std::unique_ptr<ColorBrush>;
-}
+
+class BIX_PUBLIC LinearGradientBrush : public Brush {
+public:
+};
+} // namespace bix

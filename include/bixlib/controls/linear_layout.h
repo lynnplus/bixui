@@ -20,17 +20,13 @@
 namespace bix {
 class BIX_PUBLIC LinearLayout : public Layout {
 public:
-    // void update(const UIRect& pos) override;
-
-
     void setOrientation(bool horizontal);
 
 protected:
-    // void onLayout(const UIRect& rect) override;
     void onLayout(const UIRect& rect) override;
 
 private:
-    //orientation="horizontal
+    // orientation="horizontal
     bool mIsHorizontal = false;
 };
-} // bix
+} // namespace bix

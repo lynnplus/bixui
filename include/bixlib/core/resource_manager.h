@@ -15,15 +15,11 @@
  */
 
 #pragma once
-
-#include "bixlib/geometry/rectangle.h"
-
-#include <fmt/format.h>
+#include <string>
 
 namespace bix {
-inline auto format_as(const UIRect& r) {
-    return fmt::format("Rect(x:{} y:{} w:{} h:{})", r.left(), r.top(), r.width(), r.height());
-}
-
-inline auto format_as(const UISize& r) { return fmt::format("Size(w:{} h:{})", r.width, r.height); }
+class ResourceManager final {
+public:
+    static void load(const std::string& name);
+};
 } // namespace bix

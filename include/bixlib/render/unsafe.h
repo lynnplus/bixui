@@ -29,11 +29,9 @@ public:
         mTarget = reinterpret_cast<void**>(p);
     }
 
-    void set(void* p) const {
-        *mTarget = p;
-    }
+    void set(void* p) const { *mTarget = p; }
 
 private:
     void** mTarget;
 };
-}
+} // namespace bix

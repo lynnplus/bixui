@@ -41,13 +41,11 @@ public:
     //| 0 0 1 |
     Transform() = default;
 
-    Transform(float m11, float m12, float m13, float m21, float m22, float m23, float m31, float m32, float m33) :
-        mMatrix{{m11, m12, m13}, {m21, m22, m23}, {m31, m32, m33}}, mDirty(Project) {}
-
+    Transform(float m11, float m12, float m13, float m21, float m22, float m23, float m31, float m32, float m33)
+        : mMatrix{{m11, m12, m13}, {m21, m22, m23}, {m31, m32, m33}}, mDirty(Project) {}
 
     static Transform fromTranslate(float dx, float dy);
     static Transform fromScale(float sx, float sy);
-
 
     TransformationType type() const;
 
@@ -63,4 +61,4 @@ private:
     mutable TransformationType mType = None;
     mutable TransformationType mDirty = None;
 };
-}
+} // namespace bix

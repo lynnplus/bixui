@@ -15,13 +15,12 @@
  */
 
 #pragma once
-#include <vector>
 #include "control.h"
 
+#include <vector>
 
 namespace bix {
 class BIX_PUBLIC Layout : public Control {
-    //padding border margin  总宽度=width + padding*2 + border*2 + margin*2
 public:
     BIX_DEFINE_CONTROL_CLASS_NAME(Layout)
 
@@ -39,14 +38,14 @@ public:
 protected:
     std::vector<ControlPtr> mChildren;
 
-    void onLayout(const UIRect& rect) override =0;
+    void onLayout(const UIRect& rect) override = 0;
     void dispatchDraw(Canvas& renderer) override;
     void dispatchRemoved(Control* removed);
 
 private:
     // Renderer* mTmpRenderer=nullptr;
-    //padding  background(color bitmap svg)
+    // padding  background(color bitmap svg)
 };
 
 using LayoutPtr = std::unique_ptr<Layout>;
-} // bix
+} // namespace bix

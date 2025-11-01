@@ -22,7 +22,6 @@
 namespace bix {
 // enum class Rotation
 
-
 enum class DisplayUnit {
     Invalid,
     DP,
@@ -36,50 +35,44 @@ class BIX_PUBLIC Display {
 public:
     virtual ~Display() = default;
 
-    [[nodiscard]]
-    virtual const std::string& deviceName() const noexcept =0;
-    [[nodiscard]]
-    virtual bool isValid() const noexcept =0;
+    virtual const std::string& deviceName() const noexcept = 0;
+
+    virtual bool isValid() const noexcept = 0;
     /**
      * Gets the size(native resolution) of the display in pixels.
      * @return
      */
-    [[nodiscard]]
-    virtual const UISize& resolution() const noexcept =0;
+
+    virtual const UISize& resolution() const noexcept = 0;
     /**
      *
      * @return logical resolution
      */
-    [[nodiscard]]
-    virtual const UISize& size() const noexcept =0;
 
-    [[nodiscard]]
-    virtual int refreshRate() const noexcept =0;
+    virtual const UISize& size() const noexcept = 0;
 
-    [[nodiscard]]
-    virtual int dpi() const noexcept =0;
+    virtual int refreshRate() const noexcept = 0;
 
-    [[nodiscard]]
-    virtual int baseDPI() const noexcept =0;
+    virtual int dpi() const noexcept = 0;
 
-    [[nodiscard]]
-    virtual bool isDefault() const noexcept =0;
+    virtual int baseDPI() const noexcept = 0;
+
+    virtual bool isDefault() const noexcept = 0;
     // virtual int rotation();
 };
 
 using DisplayPtr = std::shared_ptr<Display>;
 using DisplayCRef = const std::shared_ptr<Display>&;
 
-
 class DisplayStrategy {
 public:
     virtual ~DisplayStrategy() = default;
 
-    //px = dp × DPI / BASE
-    //dp = px * BASE / DPI
-    virtual float calculateDensity(const Display& display) =0;
+    // px = dp × DPI / BASE
+    // dp = px * BASE / DPI
+    virtual float calculateDensity(const Display& display) = 0;
 };
 
 using DisplayStrategyPtr = std::shared_ptr<DisplayStrategy>;
 using DisplayStrategyCRef = const std::shared_ptr<DisplayStrategy>&;
-} // bix
+} // namespace bix

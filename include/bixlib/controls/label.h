@@ -15,7 +15,7 @@
  */
 
 #pragma once
-#include "control.h"
+#include "bixlib/controls/control.h"
 
 namespace bix {
 class BIX_PUBLIC Label : public Control {

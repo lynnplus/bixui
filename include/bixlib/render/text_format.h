@@ -15,11 +15,10 @@
  */
 
 #pragma once
-#include <string>
-
-#include "unsafe.h"
 #include "bixlib/geometry/rectangle.h"
+#include "bixlib/render/unsafe.h"
 
+#include <string>
 
 namespace bix {
 enum class TextDirection {
@@ -28,7 +27,6 @@ enum class TextDirection {
     TOP_TO_BOTTOM = 2,
     BOTTOM_TO_TOP = 3,
 };
-
 
 enum class WordWrapping {
     WRAP,
@@ -51,22 +49,21 @@ enum class TextAlignment {
     DWRITE_TEXT_ALIGNMENT_JUSTIFIED
 };
 
-
 class TextPaint {
 public:
     virtual ~TextPaint() = default;
-    virtual void setText(const std::string& text) =0;
-    virtual void setFontFamily(const std::string& name) =0;
-    virtual void setBounds(const UIRect& boundingBox) =0;
-    virtual void setTextSize(float size) =0;
-    virtual void setFontWeight(int weight) =0;
-    virtual void setWordWrapping(WordWrapping wrap) =0;
-    virtual void setFontStyle(FontStyle style) =0;
+    virtual void setText(const std::string& text) = 0;
+    virtual void setFontFamily(const std::string& name) = 0;
+    virtual void setBounds(const UIRect& boundingBox) = 0;
+    virtual void setTextSize(float size) = 0;
+    virtual void setFontWeight(int weight) = 0;
+    virtual void setWordWrapping(WordWrapping wrap) = 0;
+    virtual void setFontStyle(FontStyle style) = 0;
 
-    virtual bool handle(UnsafeHandle& p) noexcept =0;
+    virtual bool handle(UnsafeHandle& p) noexcept = 0;
 
-    virtual const UIRect& bounds() const =0;
+    virtual const UIRect& bounds() const = 0;
 };
 
 using TextPaintPtr = std::unique_ptr<TextPaint>;
-}
+} // namespace bix

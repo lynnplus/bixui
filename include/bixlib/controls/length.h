@@ -56,10 +56,9 @@ public:
         }
     }
 
+    Mode mode() const { return mMode; }
 
-    [[nodiscard]] Mode mode() const { return mMode; }
-
-    [[nodiscard]] int fixed() const {
+    int fixed() const {
         if (mMode != FixedMode) {
             return 0;
         }
