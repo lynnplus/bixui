@@ -36,10 +36,10 @@ public:
             return;
         }
         mSpec = Rgba;
-        data[0] = numeric_cast<uint8_t>(r);
-        data[1] = numeric_cast<uint8_t>(g);
-        data[2] = numeric_cast<uint8_t>(b);
-        data[3] = numeric_cast<uint8_t>(a);
+        mData[0] = numeric_cast<uint8_t>(r);
+        mData[1] = numeric_cast<uint8_t>(g);
+        mData[2] = numeric_cast<uint8_t>(b);
+        mData[3] = numeric_cast<uint8_t>(a);
     }
 
     /**
@@ -57,18 +57,18 @@ public:
 
     constexpr bool isValid() const noexcept { return mSpec != Invalid; }
 
-    int red() const noexcept { return data[0]; }
+    int red() const noexcept { return mData[0]; }
 
-    int green() const noexcept { return data[1]; }
+    int green() const noexcept { return mData[1]; }
 
-    int blue() const noexcept { return data[2]; }
+    int blue() const noexcept { return mData[2]; }
 
-    int alpha() const noexcept { return data[3]; }
+    int alpha() const noexcept { return mData[3]; }
 
 protected:
     Spec mSpec = Invalid;
     // r g b a pad
-    uint8_t data[5]{0, 0, 0, 0, 0};
+    uint8_t mData[5]{0, 0, 0, 0, 0};
 };
 
 namespace colors {

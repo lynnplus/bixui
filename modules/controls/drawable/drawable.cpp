@@ -14,33 +14,22 @@
  * limitations under the License.
  */
 
-#pragma once
-
-#include "bixlib/core/window.h"
-#include "bixlib/render/canvas.h"
+#include "bixlib/controls/drawable.h"
 
 namespace bix
 {
-    class BIX_PUBLIC RenderEngine
+    void Drawable::setVisible(bool visible)
     {
-    public:
-        virtual ~RenderEngine() = default;
+        mVisible = visible;
+    }
 
-        enum Type
-        {
-            Direct2D,
-            GdiPlus,
-            X11,
+    void Drawable::setBounds(const UIRect& bounds)
+    {
+        mBounds = bounds;
+    }
 
-            UserCustom = 100
-        };
-
-        static RenderEngine* from(Type t);
-
-        virtual void shutdown() noexcept = 0;
-
-        virtual Type type() const noexcept = 0;
-
-        virtual CanvasPtr createCanvas(const Window& w) = 0;
-    };
-} // namespace bix
+    const UIRect& Drawable::bounds() const
+    {
+        return mBounds;
+    }
+}

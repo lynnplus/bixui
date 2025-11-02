@@ -28,138 +28,158 @@
 #define BIX_DEFINE_CONTROL_CLASS_NAME(name)                                       \
     const std::string& className() const override { return BIX_CTRL_NAME(name); }
 
-namespace bix {
-// Flags used for controlling the paint
-enum class ControlStateType {
-    kControlStateNormal,
-    kControlStateFocus,
-    kControlStatePressed,
-    kControlStateDisabled
-};
+namespace bix
+{
+    // Flags used for controlling the paint
+    enum class ControlStateType
+    {
+        ControlStateNormal,
+        ControlStateFocus,
+        ControlStatePressed,
+        ControlStateDisabled
+    };
 
-enum class VisibleFlag {
-    Gone,
-    Visible,
-    Invisible,
-};
+    enum class VisibleFlag
+    {
+        Gone,
+        Visible,
+        Invisible,
+    };
 
-inline bool parseToVisibleFlag(const std::string& str, VisibleFlag& val) {
-    if (str == "gone") {
-        val = VisibleFlag::Gone;
-    } else if (str == "visible") {
-        val = VisibleFlag::Visible;
-    } else if (str == "invisible") {
-        val = VisibleFlag::Invisible;
-    } else {
-        return false;
+    inline bool parseToVisibleFlag(const std::string& str, VisibleFlag& val)
+    {
+        if (str == "gone")
+        {
+            val = VisibleFlag::Gone;
+        }
+        else if (str == "visible")
+        {
+            val = VisibleFlag::Visible;
+        }
+        else if (str == "invisible")
+        {
+            val = VisibleFlag::Invisible;
+        }
+        else
+        {
+            return false;
+        }
+        return true;
     }
-    return true;
-}
 
-struct BIX_PUBLIC Border {
-    LineStyle lineStyle;
-    Color color;
-    int width;
-    int radius;
-};
+    struct BIX_PUBLIC Border
+    {
+        LineStyle lineStyle;
+        Color color;
+        int width;
+        int radius;
+    };
 
-class BIX_PUBLIC Control {
-public:
-    virtual ~Control() = default;
+    class BIX_PUBLIC Control
+    {
+    public:
+        virtual ~Control() = default;
 
-    virtual Control* parent() const;
+        virtual Control* parent() const;
 
-    //******************getter****************//
-    const std::string& id() const noexcept;
-    // const std::string& name() const;
-    VisibleFlag visible() const noexcept;
-    const UIRect& margin() const noexcept;
-    const UISize& measuredSize() const noexcept;
-    const UIRect& padding() const noexcept;
-    bool enabled() const noexcept;
+        //******************getter****************//
+        const std::string& id() const noexcept;
+        // const std::string& name() const;
+        VisibleFlag visible() const noexcept;
+        const UIRect& margin() const noexcept;
+        const UISize& measuredSize() const noexcept;
+        const UIRect& padding() const noexcept;
+        bool enabled() const noexcept;
 
-    virtual bool isContainer() const;
+        virtual bool isContainer() const;
 
-    virtual const std::string& className() const { return BIX_CTRL_NAME(Control); }
+        virtual const std::string& className() const { return BIX_CTRL_NAME(Control); }
 
-    // set the current control to invalidate and trigger the redraw command
-    void invalidate();
+        // set the current control to invalidate and trigger the redraw command
+        void invalidate();
 
-    void setParent(Control* parent);
+        void setParent(Control* parent);
 
-    //******************set attrs********************//
-    void setId(const std::string& id);
-    void setMargin(const UIRect& margin);
-    void setMargin(int v) { setMargin(UIRect(v, v, v, v)); }
-    void setPadding(const UIRect& padding);
-    void setPadding(int v) { setPadding(UIRect(v, v, v, v)); }
-    void setSize(int w, int h) { setSize(UILength(w), UILength(h)); }
-    void setSize(const UILength& w, const UILength& h);
-    void setMaximumSize(const UISize& s);
-    void setMinimumSize(const UISize& s);
-    void setEnable(bool enabled);
-    void setVisible(VisibleFlag flag);
+        //******************set attrs********************//
+        void setId(const std::string& id);
+        void setMargin(const UIRect& margin);
+        void setMargin(int v) { setMargin(UIRect(v, v, v, v)); }
+        void setPadding(const UIRect& padding);
+        void setPadding(int v) { setPadding(UIRect(v, v, v, v)); }
+        void setSize(int w, int h) { setSize(UILength(w), UILength(h)); }
+        void setSize(const UILength& w, const UILength& h);
+        void setMaximumSize(const UISize& s);
+        void setMinimumSize(const UISize& s);
+        void setEnable(bool enabled);
+        void setVisible(VisibleFlag flag);
 
-    void setBorder(const Border& border);
-    void setBorderWidth(int width);
+        void setBorder(const Border& border);
+        void setBorderWidth(int width);
 
-    // Trim the drawing range of the control and do not draw beyond the range.
-    void setBoundsClip(bool enable);
-    /**
+        // Trim the drawing range of the control and do not draw beyond the range.
+        void setBoundsClip(bool enable);
+        /**
      *
      * @param alpha 0~255
      */
-    void setAlpha(int alpha);
+        void setAlpha(int alpha);
 
-    virtual void setBackground(const Color& color);
-    virtual void setBackground(DrawablePtr drawable);
+        virtual void setBackground(const Color& color);
+        virtual void setBackground(DrawablePtr drawable);
 
-    virtual void discardCanvas();
-    /**
+        virtual void discardCanvas();
+        /**
      * Apply styles or attributes to control
      * @param attrs
      */
-    virtual void applyAttributes(const AttributeSet& attrs);
+        virtual void applyAttributes(const AttributeSet& attrs);
 
-protected:
-    friend class ControlHelper;
+    protected:
+        friend class ControlHelper;
 
-    bool mEnable = true;
-    VisibleFlag mVisible = VisibleFlag::Visible;
-    UIRect mPadding{0, 0, 0, 0};
-    UIRect mMargin{0, 0, 0, 0};
-    int mAlpha = 255;
-    Control* mParent = nullptr;
-    UIRect mPosition{};
-    UISize mMaxSize{};
-    UISize mMinSize{};
-    SpecSize mSize{};
-    UISize mMeasuredSize{};
-    Border mBorder{LineStyle::Solid, colors::Black, 0, 0};
+        bool mEnable = true;
+        VisibleFlag mVisible = VisibleFlag::Visible;
+        UIRect mPadding{0, 0, 0, 0};
+        UIRect mMargin{0, 0, 0, 0};
+        int mAlpha = 255;
+        Control* mParent = nullptr;
+        UIRect mPosition{};
+        UISize mMaxSize{};
+        UISize mMinSize{};
+        SpecSize mSize{};
+        UISize mMeasuredSize{};
+        Border mBorder{LineStyle::Solid, colors::Black, 0, 0};
 
-    Transform mPosTransform{};
-    std::string mId{};
+        Transform mPosTransform{};
+        std::string mId{};
 
-    // virtual void onRenderCreated(Canvas* renderer){BIX_UNUSED(renderer)}
+        // virtual void onRenderCreated(Canvas* renderer){BIX_UNUSED(renderer)}
 
-    /**
+        /**
      *
      * @param rect relative to parent
      */
-    virtual void layout(const UIRect& rect);
-    virtual void onDraw(Canvas& canvas) { BIX_UNUSED(canvas) }
-    void drawBackground(Canvas& canvas);
-    virtual void onDrawForeground(Canvas& canvas);
-    virtual void dispatchDraw(Canvas& canvas) { BIX_UNUSED(canvas) }
-    virtual void onLayout(const UIRect& rect) { BIX_UNUSED(rect) }
-    virtual void onMeasure() {}
-    virtual void onRemoved() {}
-    // Discard DeviceResources
-private:
-    DrawablePtr mBackground = nullptr;
-    PenPtr mBorderPen = nullptr;
-    void draw(Canvas& renderer);
-};
+        virtual void layout(const UIRect& rect);
+        virtual void onDraw(Canvas& canvas) { BIX_UNUSED(canvas) }
+        void drawBackground(Canvas& canvas);
+        virtual void onDrawForeground(Canvas& canvas);
+        virtual void dispatchDraw(Canvas& canvas) { BIX_UNUSED(canvas) }
+        virtual void onLayout(const UIRect& rect) { BIX_UNUSED(rect) }
 
-using ControlPtr = std::unique_ptr<Control>;
+        virtual void onMeasure()
+        {
+        }
+
+        virtual void onRemoved()
+        {
+        }
+
+        // Discard DeviceResources
+    private:
+        DrawablePtr mBackground = nullptr;
+        PenPtr mBorderPen = nullptr;
+        void draw(Canvas& renderer);
+    };
+
+    using ControlPtr = std::unique_ptr<Control>;
 } // namespace bix
