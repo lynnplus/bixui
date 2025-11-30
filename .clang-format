@@ -5,8 +5,11 @@ ColumnLimit: 120
 UseTab: Never
 Standard: c++20
 PointerAlignment: Left
+ReferenceAlignment: Pointer
 AllowShortEnumsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: All
 AlignEscapedNewlines: LeftWithLastLine
+SeparateDefinitionBlocks: Always
 NamespaceIndentation: None
 IndentRequiresClause: false
 BreakTemplateDeclarations: Yes
@@ -26,3 +29,8 @@ IncludeCategories:
     SortPriority: 0
     CaseSensitive: false
 IncludeIsMainRegex: '(Test)?$'
+FixNamespaceComments: true
+ShortNamespaceLines: 0
+SpacesInLineCommentPrefix:
+  Maximum: -1
+  Minimum: 1

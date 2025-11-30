@@ -1,5 +1,6 @@
-# cev
-Cross-Element Vision is a cross-platform GUI development library
+# bixui
+
+a cross-platform GUI development library
 
 Empty Project!!!
 

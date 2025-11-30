@@ -301,7 +301,6 @@ private:
     constexpr explicit Flags(ValueType value) noexcept { mValue = value; }
 };
 
-
 template <class Enum, class Enable = void>
 struct IsFlagsEnumType : std::false_type {};
 
