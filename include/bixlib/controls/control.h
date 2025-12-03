@@ -16,12 +16,12 @@
 
 #pragma once
 
+#include "bixlib/controls/border.h"
 #include "bixlib/controls/drawable.h"
 #include "bixlib/controls/length.h"
 #include "bixlib/core/window_events.h"
 #include "bixlib/parser/attribute_set.h"
 #include "bixlib/utils/flags.h"
-#include "bixlib/controls/border.h"
 
 #include <string>
 
@@ -66,10 +66,10 @@ enum class gravity {
 };
 
 enum class ControlFlag : uint32_t {
-    Disable =       1 << 0,
-    Clickable =     1 << 1,
-    Invalidated=    1 << 2,
-    ForceLayout=    1<<3
+    Disable = 1 << 0,
+    Clickable = 1 << 1,
+    Invalidated = 1 << 2,
+    ForceLayout = 1 << 3
 };
 BIX_DECLARE_ENUM_FLAGS(ControlFlag)
 using ControlFlags = Flags<ControlFlag>;
@@ -216,7 +216,7 @@ private:
     std::string mId{};
     UIRect mPosition{}; // layout position
     UISize mMeasuredSize{0, 0};
-    BorderPtr mBorder=nullptr;
+    BorderPtr mBorder = nullptr;
     Transform mPosTransform{};
     DrawablePtr mBackground = nullptr;
     ControlFlags mFlags;
