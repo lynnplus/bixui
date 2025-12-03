@@ -55,6 +55,8 @@ public:
     void moveToCenter();
     void setTitle(const std::string& title);
 
+    void invalidateRect(const UIRect& rect);
+
     WindowPrivate* getImpl() const;
 
     std::string title() const;
