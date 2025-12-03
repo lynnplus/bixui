@@ -67,10 +67,18 @@ public:
 
     virtual const Color& color() const noexcept = 0;
 
+    /**
+     * get the stroke width of the pen.
+     *
+     * @return The stroke width of the pen.
+     */
     virtual int strokeWidth() const noexcept = 0;
 
     virtual bool handle(UnsafeHandle& p) noexcept = 0;
 };
 
+/**
+ * std::unique_ptr<Pen> alias for Pen objects
+ */
 using PenPtr = std::unique_ptr<Pen>;
 } // namespace bix
