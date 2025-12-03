@@ -26,7 +26,9 @@ class BIX_PUBLIC Color {
 public:
     enum Spec {
         Invalid,
-        Rgba,
+        RGB,
+        HSV,
+        HSL,
     };
 
     constexpr Color() = default;
@@ -35,7 +37,7 @@ public:
         if (!isRgbaValid(r, g, b, a)) {
             return;
         }
-        mSpec = Rgba;
+        mSpec = RGB;
         mData[0] = numeric_cast<uint8_t>(r);
         mData[1] = numeric_cast<uint8_t>(g);
         mData[2] = numeric_cast<uint8_t>(b);
@@ -64,6 +66,11 @@ public:
     int blue() const noexcept { return mData[2]; }
 
     int alpha() const noexcept { return mData[3]; }
+
+    bool operator==(const Color& rhs) const noexcept {
+        return mSpec == rhs.mSpec && red() == rhs.red() && green() == rhs.green() && blue() == rhs.blue() &&
+               alpha() == rhs.alpha();
+    }
 
 protected:
     Spec mSpec = Invalid;

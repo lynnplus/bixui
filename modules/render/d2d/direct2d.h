@@ -24,8 +24,9 @@ namespace bix {
 
 struct IUnknownDeleter {
     void operator()(IUnknown* b) const {
-        if (b)
+        if (b) {
             b->Release();
+        }
     }
 };
 
@@ -37,5 +38,7 @@ using DHwndRenderTargetPtr = std::unique_ptr<ID2D1HwndRenderTarget, IUnknownDele
 using DWriteTextFormatPtr = std::unique_ptr<IDWriteTextFormat, IUnknownDeleter>;
 using DWriteTextLayoutPtr = std::unique_ptr<IDWriteTextLayout, IUnknownDeleter>;
 using DStrokeStylePtr = std::unique_ptr<ID2D1StrokeStyle, IUnknownDeleter>;
+using DLayerPtr = std::unique_ptr<ID2D1Layer, IUnknownDeleter>;
+using DWInlineObjPtr = std::unique_ptr<IDWriteInlineObject, IUnknownDeleter>;
 
 } // namespace bix

@@ -23,10 +23,13 @@ public:
     void setOrientation(bool horizontal);
 
 protected:
-    void onLayout(const UIRect& rect) override;
+    void onLayout(const UIRect& pos) override;
+    void onMeasure(Canvas& canvas, const UISize& available, const UISize& max) override;
+
+    void measureVertical(Canvas& canvas, const UISize& available, const UISize& max);
 
 private:
     // orientation="horizontal
-    bool mIsHorizontal = false;
+    bool mIsHorizontal = false; // default vertical
 };
 } // namespace bix

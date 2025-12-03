@@ -16,6 +16,17 @@
 
 #pragma once
 
+/**
+ * @file geometry.h
+ * Collection of header files for the geometry module
+ *
+ * This header provides centralized access to all basic geometric shape
+ * classes and utilities in the bixlib geometry module.
+ *
+ * @defgroup geometry Geometry Module
+ * Collection of classes for 2D geometric operations
+ */
+
 #include "bixlib/geometry/ellipse.h"
 #include "bixlib/geometry/point.h"
 #include "bixlib/geometry/rectangle.h"

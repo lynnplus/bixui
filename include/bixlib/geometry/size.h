@@ -21,11 +21,24 @@
 #include "bixlib/utils/numeric.h"
 
 namespace bix {
+
+template <Arithmetic T>
+class Margins;
+
+/**
+ * size
+ *
+ * @class Size
+ * @tparam T
+ */
 template <Arithmetic T>
 class BIX_PUBLIC Size {
+
 public:
     T width, height;
+
     Size() : width(-1), height(-1) {}
+
     Size(T width_, T height_) : width(width_), height(height_) {}
 
     Size<float> scale(float factor) const noexcept {
@@ -36,9 +49,49 @@ public:
 
     bool isValid() const noexcept { return width >= 0 && height >= 0; }
 
-    template <typename = std::is_integral<T>>
-    bool isEmpty() const noexcept {
-        return width <= 0 || height <= 0;
+    // template <typename = std::is_integral<T>>
+    bool isEmpty() const noexcept { return width <= 0 || height <= 0; }
+
+    Size& operator-=(const Margins<T>& margins) noexcept {
+        if (width > 0) {
+            width = std::max(width - margins.totalX(), 0);
+        }
+        if (height > 0) {
+            height = std::max(height - margins.totalY(), 0);
+        }
+        return *this;
+    }
+
+    Size operator-(const Margins<T>& margins) const noexcept {
+        T w = width, h = height;
+        if (w > 0) {
+            w = std::max(w - margins.totalX(), 0);
+        }
+        if (h > 0) {
+            h = std::max(h - margins.totalY(), 0);
+        }
+        return {w, h};
+    }
+
+    Size operator+(const Margins<T>& margins) const noexcept {
+        T w = width, h = height;
+        if (w > 0) {
+            w = std::max(w + margins.totalX(), 0);
+        }
+        if (h > 0) {
+            h = std::max(h + margins.totalY(), 0);
+        }
+        return {w, h};
+    }
+
+    Size& operator-=(const Size& rhs) noexcept {
+        if (width > 0) {
+            width = std::max(width - rhs.width, 0);
+        }
+        if (height > 0) {
+            height = std::max(height - rhs.height, 0);
+        }
+        return *this;
     }
 
     Size<float> operator/(float v) const noexcept {
@@ -49,8 +102,9 @@ public:
         return {numeric_cast<float>(width) * v, numeric_cast<float>(height) * v};
     }
 
-    constexpr bool operator==(Size const& rhs) noexcept { return comparesEqual(rhs); }
-    constexpr bool operator!=(Size const& rhs) noexcept { return !comparesEqual(rhs); }
+    constexpr bool operator==(const Size& rhs) noexcept { return comparesEqual(rhs); }
+
+    constexpr bool operator!=(const Size& rhs) noexcept { return !comparesEqual(rhs); }
 
 private:
     constexpr bool comparesEqual(const Size& rhs) noexcept { return width == rhs.width && height == rhs.height; }

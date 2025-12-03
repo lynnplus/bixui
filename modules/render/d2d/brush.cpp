@@ -14,12 +14,21 @@
  * limitations under the License.
  */
 
-#include "bixlib/controls/drawable.h"
+#include "brush.h"
+
+#include "convert-inl.h"
 
 namespace bix {
-void Drawable::setVisible(bool visible) { mVisible = visible; }
 
-void Drawable::setBounds(const UIRect& bounds) { mBounds = bounds; }
+D2DSolidColorBrush::D2DSolidColorBrush(DSolidColorBrushPtr b, ID2D1RenderTarget* rt, uintptr_t id)
+    : D2DBasicBrush(rt, id), mBrushImpl(std::move(b)) {}
 
-const UIRect& Drawable::bounds() const { return mBounds; }
+void D2DSolidColorBrush::setColor(const Color& color) { mBrushImpl->SetColor(convert_to_DColorF(color)); }
+
+Color D2DSolidColorBrush::color() const noexcept {
+    // TODO not implemented
+    return {};
+}
+
+ID2D1Brush* D2DSolidColorBrush::current() const { return mBrushImpl.get(); }
 } // namespace bix

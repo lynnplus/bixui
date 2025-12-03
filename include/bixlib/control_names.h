@@ -18,12 +18,12 @@
 
 #include <string>
 
-#define BIX_CTRL_CONTROL ("Control")
 #define BIX_CTRL_LAYOUT ("Layout")
 #define BIX_CTRL_LABEL ("Label")
+#define BIX_CTRL_BUTTON ("Button")
 
 namespace bix::names {
-const std::string ClsNameControl{BIX_CTRL_CONTROL};
 const std::string ClsNameLayout{BIX_CTRL_LAYOUT};
 const std::string ClsNameLabel{BIX_CTRL_LABEL};
+const std::string ClsNameButton{BIX_CTRL_BUTTON};
 } // namespace bix::names

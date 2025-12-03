@@ -14,12 +14,36 @@
  * limitations under the License.
  */
 
-#include "bixlib/controls/drawable.h"
+#pragma once
+
+#include "bixlib/render/engine.h"
+#include "direct2d.h"
 
 namespace bix {
-void Drawable::setVisible(bool visible) { mVisible = visible; }
 
-void Drawable::setBounds(const UIRect& bounds) { mBounds = bounds; }
+class Direct2DEngine : public RenderEngine {
+public:
+    static Direct2DEngine* instance() {
+        static Direct2DEngine instance;
+        return &instance;
+    }
 
-const UIRect& Drawable::bounds() const { return mBounds; }
+    ~Direct2DEngine() override;
+
+    void shutdown() noexcept override;
+    Type type() const noexcept override;
+
+    [[nodiscard]]
+    CanvasPtr createCanvas(const Window& w) override;
+
+    IDWriteTextFormat* createFont();
+
+protected:
+    DFactorPtr mD2DFactory = nullptr;
+    DWriteFactoryPtr mDWriteFactory = nullptr;
+
+private:
+    Direct2DEngine();
+};
+
 } // namespace bix

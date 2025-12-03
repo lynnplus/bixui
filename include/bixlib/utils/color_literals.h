@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-#include "bixlib/controls/drawable.h"
+#pragma once
+#include "bixlib/render/color.h"
 
-namespace bix {
-void Drawable::setVisible(bool visible) { mVisible = visible; }
-
-void Drawable::setBounds(const UIRect& bounds) { mBounds = bounds; }
-
-const UIRect& Drawable::bounds() const { return mBounds; }
-} // namespace bix
+namespace bix::literals {
+inline Color operator""_rgba(const char* hex) { return Color::fromHexString(hex); }
+} // namespace bix::literals

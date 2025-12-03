@@ -26,18 +26,37 @@ enum class WindowEventType {
     DestroyEvent,
     ClientResizeEvent,
     EraseBkgndEvent,
+    MouseMoveEvent,
+    MouseLButtonDownEvent,
+    MouseLButtonUpEvent,
+    MouseRButtonDownEvent,
+    MouseRButtonUpEvent
 };
-
 
 class WindowEvent {
 public:
     union WindowEventData {
-        Point<float> point;
+        Point<int> point;
         Size<float> size;
+        Rect<int> rect;
     };
 
     WindowEventType ttype = WindowEventType::NilEvent;
     WindowEventData data{};
     bool handled = false;
 };
-}
+
+class MouseEvent {
+public:
+    MouseEvent(const Point<int>& pos, const Point<int>& lastPos) : mPosition(pos), mLastPosition(lastPos) {}
+
+    const Point<int>& position() const { return mPosition; }
+
+    WindowEventType ttype = WindowEventType::NilEvent;
+    int64_t timestamp = 0; // using std::chrono::steady_clock::now()
+
+private:
+    Point<int> mPosition;
+    Point<int> mLastPosition;
+};
+} // namespace bix

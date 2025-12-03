@@ -31,6 +31,8 @@ IncludeCategories:
 IncludeIsMainRegex: '(Test)?$'
 FixNamespaceComments: true
 ShortNamespaceLines: 0
+ReflowComments: true
 SpacesInLineCommentPrefix:
   Maximum: -1
   Minimum: 1
+QualifierAlignment: Left

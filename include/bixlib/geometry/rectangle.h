@@ -18,8 +18,13 @@
 
 #include "bixlib/geometry/point.h"
 #include "bixlib/geometry/size.h"
+#include "rectangle.h"
 
 namespace bix {
+
+template <Arithmetic T>
+class Margins;
+
 template <Arithmetic T>
 class BIX_PUBLIC Rect {
 public:
@@ -30,6 +35,8 @@ public:
         x2 = y2 = -1;
     }
 
+    explicit Rect(const Size<T>& size) : Rect(0, 0, size) {}
+
     Rect(T l, T t, T r, T b) {
         x1 = l;
         y1 = t;
@@ -37,7 +44,7 @@ public:
         y2 = b;
     }
 
-    Rect(T l, T t, Size<T> size) {
+    Rect(T l, T t, const Size<T>& size) {
         x1 = l;
         y1 = t;
         x2 = l + size.width;
@@ -45,35 +52,38 @@ public:
     }
 
     T width() const noexcept { return x2 - x1; }
+
     T height() const noexcept { return y2 - y1; }
+
     T left() const noexcept { return x1; }
+
     T top() const noexcept { return y1; }
+
     T right() const noexcept { return x2; }
+
     T bottom() const noexcept { return y2; }
 
     Point<T> lt() const noexcept { return {x1, y1}; }
+
     Point<T> rb() const noexcept { return {x2, y2}; }
+
     Point<T> center() const { return Point((x1 + x2) / 2, (y1 + y2) / 2); }
+
     Size<T> size() const { return Size(width(), height()); }
 
-    template <typename = std::is_integral<T>>
-    bool isEmpty() const noexcept {
-        return width() <= 0 || height() <= 0;
-    }
+    Size<T> asPadding() const noexcept { return {width(), height()}; }
 
-    template <typename = std::is_integral<T>>
+    bool isEmpty() const noexcept { return width() <= 0 || height() <= 0; }
 
-    bool isValid() const {
-        return x1 <= x2 && y1 <= y2;
-    }
+    bool isValid() const { return x1 <= x2 && y1 <= y2; }
 
     void clear() { x1 = y1 = x2 = y2 = 0; }
 
     Rect<int> aligned() const {
-        int xmin = numeric_cast<int>(floor(x1));
-        int xmax = numeric_cast<int>(ceil(x2));
-        int ymin = numeric_cast<int>(floor(y1));
-        int ymax = numeric_cast<int>(ceil(y2));
+        int xmin = numeric_cast<int>(std::floor(x1));
+        int xmax = numeric_cast<int>(std::ceil(x2));
+        int ymin = numeric_cast<int>(std::floor(y1));
+        int ymax = numeric_cast<int>(std::ceil(y2));
         return {xmin, ymin, xmax, ymax};
     }
 
@@ -97,6 +107,16 @@ public:
 
     Rect& setSize(T width_, T height_) {
         x2 = x1 + width_;
+        y2 = y1 + height_;
+        return *this;
+    }
+
+    Rect& setWidth(T width_) {
+        x2 = x1 + width_;
+        return *this;
+    }
+
+    Rect& setHeight(T height_) {
         y2 = y1 + height_;
         return *this;
     }
@@ -136,15 +156,13 @@ public:
         return *this;
     }
 
-    constexpr Rect operator+(const Rect& rhs) const noexcept {
-        return {x1 - rhs.x1, y1 - rhs.y1, x2 + rhs.x2, y2 + rhs.y2};
+    constexpr Rect removeMargin(T margin) const noexcept {
+        return {x1 + margin, y1 + margin, x2 - margin, y2 - margin};
     }
 
-    constexpr Rect operator-(const Rect& rhs) const noexcept {
-        return {x1 + rhs.x1, y1 + rhs.y1, x2 - rhs.x2, y2 - rhs.y2};
+    constexpr Rect operator-(const Margins<T>& margins) const noexcept {
+        return {x1 + margins.left, y1 + margins.top, x2 - margins.right, y2 - margins.bottom};
     }
-
-    constexpr Rect operator-(T margin) noexcept { return {x1 += margin, y1 += margin, x2 -= margin, y2 -= margin}; }
 
     constexpr Rect operator+(const Size<T>& rhs) const noexcept { return {x1, y1, x2 + rhs.width, y2 + rhs.height}; }
 
@@ -162,8 +180,105 @@ public:
                    fuzzyCompareEqual(y2, rhs.y2);
         }
     }
+
+    bool contains(const Point<T> pt) const noexcept {
+        if (isEmpty()) {
+            return false;
+        }
+        if (pt.x < left() || pt.x > right() || pt.y < top() || pt.y > bottom()) {
+            return false;
+        }
+        return true;
+    }
 };
 
 using UIRect = Rect<int>;
 using RectF = Rect<float>;
+
+/**
+ * Quarter-ellipse radius template
+ *
+ * Represents corner radii for rounded rectangles, supports uniform setting and validation,
+ * Each corner is modeled as a quarter-ellipse,
+ * Radius values are specified by #radiusX (horizontal) and #radiusY (vertical),
+ * Template type T defines the underlying data type (e.g., int, float)
+ *
+ * @tparam T Arithmetic type (integral or floating-point)
+ */
+template <Arithmetic T>
+class CornerRadius {
+public:
+    T radiusX = 0; ///< Horizontal radius
+    T radiusY = 0; ///< Vertical radius
+
+    /**
+     * Set radius
+     * @param[in] radius New radius value
+     * @return Reference to current object
+     */
+    CornerRadius& setRadius(T radius) noexcept {
+        radiusX = radiusX = radius;
+        return *this;
+    }
+
+    /**
+     * Check if radii are empty
+     * @return True if both radii are zero
+     * @note Direct comparison for integers, fuzzy comparison for floats
+     */
+    constexpr bool isEmpty() const noexcept {
+        if constexpr (std::is_integral_v<T>) {
+            return radiusX == 0 && radiusY == 0;
+        } else {
+            return fuzzyEqualZero(radiusX) && fuzzyEqualZero(radiusY);
+        }
+    }
+
+    /**
+     * Validate radii
+     * @return True if both radii are non-negative
+     */
+    constexpr bool isValid() const noexcept { return radiusX >= 0 && radiusY >= 0; }
+
+    // TODO float
+    bool operator==(const CornerRadius& rhs) const noexcept { return radiusX == rhs.radiusX && radiusY == rhs.radiusY; }
+};
+
+template <Arithmetic T>
+class BIX_PUBLIC RoundedRect : public Rect<T> {
+public:
+    CornerRadius<T> radii;
+
+    /**
+     * Constructor for RoundedRect.
+     * Initialize a rounded rectangle with uniform corner radius
+     * @param size Size of the rectangle
+     * @param radius Uniform radius for all corners
+     */
+    RoundedRect(const Size<T>& size, T radius) : Rect<T>(size), radii(radius) {}
+
+    void setRadius(T radius_) noexcept { radii = {radius_}; }
+};
+
+using UIRoundRect = RoundedRect<int>;
+
+template <Arithmetic T>
+class BIX_PUBLIC Margins {
+public:
+    T left = 0, top = 0, right = 0, bottom = 0;
+
+    T totalX() const noexcept { return left + right; }
+
+    T totalY() const noexcept { return top + bottom; }
+
+    Margins operator+(T v) const noexcept { return {left + v, top + v, right, bottom + v}; }
+
+    Margins operator+(const Margins& margins) const noexcept {
+        return {left + margins.left, top + margins.top, right + margins.right, bottom + margins.bottom};
+    }
+};
+
+using UIMargins = Margins<int>;
+using UIPaddings = Margins<int>;
+
 } // namespace bix

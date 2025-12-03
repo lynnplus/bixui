@@ -196,6 +196,8 @@ public:
         return *this;
     }
 
+    constexpr Flags& setFlag(Enum flag, bool enable) noexcept { return enable ? on(Flags(flag)) : off(Flags(flag)); }
+
     /**
      * Toggles the state of the specified flag in the flags' container.
      *
@@ -252,7 +254,7 @@ public:
 
     /**
      * Retains only the flags that are also set in the given Flags object
-     * @param flags flags The Flags object whose flags should be retained
+     * @param flags The Flags object whose flags should be retained
      * @return Reference to the modified flags object for method chaining
      * @see #operator&=(Flags)
      */

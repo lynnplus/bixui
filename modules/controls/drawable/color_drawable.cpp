@@ -14,32 +14,28 @@
  * limitations under the License.
  */
 
-#pragma once
-#include <concepts>
-#include <type_traits>
+#include "bixlib/controls/drawable.h"
 
 namespace bix {
 
-/**
- * Concept for arithmetic types.
- * Defines a type constraint for integral or floating-point types,
- * Used to enforce arithmetic operations in templates,
- * Ensures type compatibility with arithmetic operations.
- * @code
- * //Example usage:
- * template<Arithmetic T> void process(T value);
- * @endcode
- */
-template <typename T>
-concept Arithmetic = std::is_arithmetic_v<T>;
+ColorDrawable::ColorDrawable(const Color& color) : mColor(color) {}
 
-template <typename Dp, typename Bp>
-concept DerivedFrom = std::derived_from<Dp, Bp>;
+void ColorDrawable::setAlpha(int alpha) {
+    // TODO not implemented
+    BIX_UNUSED(alpha)
+}
 
-template <typename T>
-concept FloatType = std::is_floating_point_v<T>;
+void ColorDrawable::draw(Canvas* canvas) {
+    if (!mBounds.isValid()) {
+        return;
+    }
+    if (!mBrush) {
+        mBrush = canvas->createColorBrush(mColor);
+    }
+    canvas->fillRectangle(mBounds, *mBrush);
+}
 
-template <class T>
-concept EnumType = std::is_enum_v<T>;
+void ColorDrawable::setColor(const Color& color) { mColor = color; }
 
+void ColorDrawable::discardCanvas() { mBrush = nullptr; }
 } // namespace bix

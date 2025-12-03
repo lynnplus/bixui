@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-#include "bixlib/controls/drawable.h"
+#include "render/d2d/engine.h"
+
+#include <bixlib/render/engine.h>
 
 namespace bix {
-void Drawable::setVisible(bool visible) { mVisible = visible; }
 
-void Drawable::setBounds(const UIRect& bounds) { mBounds = bounds; }
-
-const UIRect& Drawable::bounds() const { return mBounds; }
+RenderEngine* RenderEngine::from(Type t) {
+    if (t == Direct2D) {
+        return Direct2DEngine::instance();
+    }
+    return nullptr;
+}
 } // namespace bix

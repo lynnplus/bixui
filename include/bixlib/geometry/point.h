@@ -18,6 +18,7 @@
 
 #include "bixlib/export_macro.h"
 #include "bixlib/utils/concepts.h"
+#include "bixlib/utils/numeric.h"
 
 namespace bix {
 template <Arithmetic T>
@@ -25,7 +26,22 @@ struct BIX_PUBLIC Point {
     T x, y;
 
     Point() : x(0), y(0) {}
+
     Point(T x_, T y_) : x(x_), y(y_) {}
+
+    Point<float> operator/(float density) const noexcept {
+        Point<float> result{numeric_cast<float>(x), numeric_cast<float>(y)};
+        if (fuzzyEqualZero<float, 4>(density)) {
+            return result;
+        }
+        result.x /= density;
+        result.y /= density;
+        return result;
+    }
+
+    Point<int> floor() const noexcept {
+        return Point<int>(numeric_cast<int>(std::floor(x)), numeric_cast<int>(std::floor(y)));
+    }
 };
 
 template <Arithmetic T>

@@ -16,12 +16,26 @@
 
 #pragma once
 
+#include "bixlib/geometry.h"
 #include "bixlib/render/brush.h"
 #include "bixlib/render/pen.h"
 #include "bixlib/render/text_format.h"
 #include "bixlib/render/transform.h"
 
 namespace bix {
+
+struct ClipRoundRect {
+    UIRect rect;
+    int radius;
+};
+
+struct TextMetrics {
+    int minWidth;
+    int width;
+    int height;
+    int lineCount;
+};
+
 class BIX_PUBLIC Canvas {
 public:
     virtual ~Canvas() = default;
@@ -36,37 +50,39 @@ public:
     virtual void setTransform(const Transform& transform) = 0;
 
     [[nodiscard]]
-    virtual ColorBrushPtr createColorBrush(const Color& color) const = 0;
+    virtual ColorBrushPtr createColorBrush(const Color& color) = 0;
     [[nodiscard]]
-    virtual PenPtr createPen(const Color& color) const = 0;
+    virtual PenPtr createPen(const Color& color) = 0;
     [[nodiscard]]
-    virtual TextPaintPtr createTextPaint() const = 0;
+    virtual TextPaintPtr createTextPaint() = 0;
 
-    virtual void pushClip(const UIRect& rect) = 0;
+    virtual void pushClip(const UIRoundRect& rect) = 0;
     virtual void popClip() = 0;
 
     virtual void fillRectangle(const UIRect& rect, Brush& brush) = 0;
 
     /**
-     * Draws a rectangle outline using the specified pen, with the outline style specified by the pen
-     * @param rect rectangle to draw
-     * @param pen pen
+     * Draws a rectangle outline on the canvas using the specified pen.
+     *
+     * This function draws a rectangle outline on the canvas based on the provided Rect object.
+     * The outline is composed of four straight lines, and its appearance is determined by the Pen object.
+     *
+     * @param[in] rect The Rect object defining the rectangle's position and size.
+     * @param[in] pen The Pen object specifying the line style, color, and width of the outline.
+     *
+     * @note The rectangular outline is drawn along the coordinates provided by Rect,
+     * extending from the edge inwards by the width (Pen::strokeWidth()) of the Pen,
+     * occupying the inner area.
+     * @warning If the Rect object is invalid (e.g., negative dimensions), the behavior is undefined.
+     * If the Pen's width is 0, the rectangle will not be drawn.
      */
     virtual void drawRectangle(const UIRect& rect, Pen& pen) = 0;
 
-    /**
-     * Draws the outline of the specified rounded rectangle using the specified stroke style
-     * @param pos The position of the rounded rectangle to be drawn
-     * @param strokeSize The width of each outline stroke of the rounded rectangle to be drawn.
-     * @param rx The x-radius for the quarter ellipse that is drawn to replace every corner of the rectangle.
-     * @param ry The y-radius for the quarter ellipse that is drawn to replace every corner of the rectangle.
-     * @param pen A pen used to draw the outline of a rounded rectangle
-     */
-    virtual void drawRoundRect(const UIRect& pos, const UIRect& strokeSize, int rx, int ry, Pen& pen) = 0;
-    // virtual void drawEllipse(const EllipseF& ellipse, const Brush& brush) =0;
+    virtual void drawRoundRect(const UIRect& rect, int radiusX, int radiusY, Pen& pen) = 0;
+    virtual void drawEllipse(const UIEllipse& ellipse, Pen& pen) = 0;
 
-    virtual void measureText(const std::string& text, TextPaint& format, UIRect& boundingBox) = 0;
-    virtual void drawText(TextPaint& text, Brush& brush) = 0;
+    virtual void measureText(TextPaint& format, TextMetrics& metrics) = 0;
+    virtual void drawText(const UIPoint& origin, TextPaint& text, Brush& brush) = 0;
     virtual void drawLine(const UIPoint& p0, const UIPoint& p1, Pen& pen) = 0;
     virtual void drawLines(const std::vector<UILine>& lines, Pen& pen) = 0;
 
