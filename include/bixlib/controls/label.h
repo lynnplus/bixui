@@ -20,24 +20,35 @@
 namespace bix {
 class BIX_PUBLIC Label : public Control {
 public:
-    BIX_DEFINE_CONTROL_CLASS_NAME(Label)
+    const std::string& className() const noexcept override;
 
     void setText(const std::string& str);
     void setTextSize(int size);
     // void setTextAlignment();
 
+    void setTextLines(int maxLines);
+
+protected:
+    void onLayout(const UIRect& rect) override;
+
+public:
     void onDraw(Canvas& canvas) override;
     void discardCanvas() override;
 
 protected:
     ColorBrushPtr mBrush = nullptr;
     TextPaintPtr mTextPaint = nullptr;
+    Color mTextColor = colors::Black;
 
+    UIRect mTextBox{0, 0,0,0};//text layout bounds box
     std::string mText{};
     int mTextSize = 12;
+    int mMaxLines = 0; // unlimit
 
     void drawText();
 
-    void setupTextPaint(const Canvas& canvas);
+    void setupTextPaint(Canvas& canvas);
+
+    void onMeasure(Canvas& canvas, const UISize& available, const UISize& max) override;
 };
-} // bix
+} // namespace bix
