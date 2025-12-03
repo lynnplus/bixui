@@ -36,7 +36,6 @@ enum class BrushStyle {
  */
 class BIX_PUBLIC Brush {
 public:
-
     virtual ~Brush() = default;
 
     /**
