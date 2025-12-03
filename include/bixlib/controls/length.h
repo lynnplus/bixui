@@ -22,63 +22,75 @@ namespace bix {
 class BIX_PUBLIC UILength {
 public:
     enum Mode {
+        AutoMode,
         FixedMode,
         PercentageMode,
-        NegativeMode, //full auto
-    };
-
-    enum Preset {
-        AutoLength = -1,
-        FullLength = -2,
+        FillMode
     };
 
     UILength() = default;
 
     constexpr explicit UILength(int v) {
-        if (v == AutoLength || v == FullLength) {
-            mMode = NegativeMode;
-        } else {
-            mMode = FixedMode;
-            if (v <= 0) {
-                v = 0;
-            }
+        mMode = FixedMode;
+        if (v < 0) {
+            v = 0;
         }
-        mValue.intValue = v;
+        mValue = v;
     }
 
+    constexpr explicit UILength(Mode m) { mMode = m; }
+
     constexpr explicit UILength(float v) {
-        if (v <= 0.00001) {
-            mMode = FixedMode;
-            mValue.intValue = 0;
-        } else {
-            mMode = PercentageMode;
-            mValue.floatValue = v;
+        mMode = PercentageMode;
+        if (v > 1.f) {
+            v = 1.f;
         }
+        if (v < 0.f) {
+            v = 0.f;
+        }
+        mValue = numeric_cast<int>(v * 100.f);
     }
 
     Mode mode() const { return mMode; }
+
+    bool isAuto() const { return mMode == AutoMode; }
+
+    bool isFixed() const { return mMode == FixedMode; }
+
+    bool isRelative() const { return mMode == PercentageMode || mMode == FillMode; }
 
     int fixed() const {
         if (mMode != FixedMode) {
             return 0;
         }
-        return mValue.intValue;
+        return mValue;
+    }
+
+    int get(int v) const noexcept{
+        switch (mMode) {
+        case PercentageMode:
+            return v * mValue / 100;
+        case FillMode:
+            return v;
+        case AutoMode:
+            return -1;
+        default:
+            return mValue;
+        }
     }
 
 private:
-    union {
-        int intValue;
-        float floatValue;
-    } mValue{AutoLength};
-
-    Mode mMode = NegativeMode;
+    int mValue = 0;
+    Mode mMode = AutoMode;
 };
 
-constexpr inline UILength FullParent{UILength::FullLength};
-constexpr inline UILength AutoParent{UILength::AutoLength};
+constexpr inline UILength FullParent{UILength::FillMode};
+constexpr inline UILength AutoContent{UILength::AutoMode};
 
 struct SpecSize {
     UILength width{};
     UILength height{};
+
+    UISize get(const UISize& src) const noexcept { return {width.get(src.width), height.get(src.height)}; }
 };
-}
+} // namespace bix

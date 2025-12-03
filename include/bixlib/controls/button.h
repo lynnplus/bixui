@@ -15,11 +15,15 @@
  */
 
 #pragma once
+#include "label.h"
 #include "bixlib/controls/control.h"
 
 namespace bix {
-class BIX_PUBLIC Button : public Control {
+class BIX_PUBLIC Button : public Label {
 public:
+    Button();
+
+    const std::string& className() const noexcept override;
     void discardCanvas() override;
 
 protected:
@@ -27,5 +31,6 @@ protected:
 
 private:
     // ColorBrushPtr mBrush=nullptr;
+
 };
 } // namespace bix
