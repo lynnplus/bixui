@@ -40,7 +40,7 @@ protected:
     TextPaintPtr mTextPaint = nullptr;
     Color mTextColor = colors::Black;
 
-    UIRect mTextBox{0, 0,0,0};//text layout bounds box
+    UIRect mTextBox{0, 0, 0, 0}; // text layout bounds box
     std::string mText{};
     int mTextSize = 12;
     int mMaxLines = 0; // unlimit
