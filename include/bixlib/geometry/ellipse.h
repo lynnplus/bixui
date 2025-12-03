@@ -19,10 +19,16 @@
 #include "bixlib/geometry/point.h"
 
 namespace bix {
+/**
+ * @tparam T
+ * @ingroup geometry
+ */
 template <Arithmetic T>
 struct BIX_PUBLIC Ellipse {
     Point<T> point;
     T radiusX;
     T radiusY;
 };
+
+using UIEllipse = Ellipse<int>;
 } // namespace bix
