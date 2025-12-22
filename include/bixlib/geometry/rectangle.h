@@ -294,11 +294,11 @@ public:
 
     [[nodiscard]]
     ShapeType shape() const {
-        if (tl==tr && tl==bl && tl==br) {
+        if (tl == tr && tl == bl && tl == br) {
             if (tl.isEmpty()) {
                 return ShapeType::Rectangle;
             }
-            if (tl.radiusX>=this->width()/2&&tl.radiusY>=this->height()/2) {
+            if (tl.radiusX >= this->width() / 2 && tl.radiusY >= this->height() / 2) {
                 // return ShapeType::Ellipse;
             }
             return ShapeType::RoundedRectangle;
