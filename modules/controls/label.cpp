@@ -44,18 +44,18 @@ void Label::onLayout(const UIRect& rect) {
 void Label::onDraw(Canvas& canvas) {
     Control::onDraw(canvas);
 
-    if (!mBrush) {
-        mBrush = canvas.createColorBrush(mTextColor);
+    if (!mTextPen) {
+        mTextPen = canvas.createPen(mTextColor);
     }
     if (!mTextPaint) {
         setupTextPaint(canvas);
     }
-    canvas.drawText(mTextBox.lt(), *mTextPaint, *mBrush);
+    canvas.drawText(mTextBox.lt(), *mTextPaint, *mTextPen);
 }
 
 void Label::discardCanvas() {
     Control::discardCanvas();
-    mBrush = nullptr;
+    mTextPen = nullptr;
     mTextPaint = nullptr;
 }
 

@@ -41,7 +41,7 @@ constexpr To numeric_cast(From value) {
     using ToLimit = std::numeric_limits<To>;
     using FromLimit = std::numeric_limits<From>;
 
-    if constexpr (std::is_same_v<From,To>) {
+    if constexpr (std::is_same_v<From, To>) {
         return value;
     }
 

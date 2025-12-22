@@ -28,17 +28,16 @@ namespace bix {
  */
 class BIX_PUBLIC Layout : public Control {
 public:
-
     using ChildrenList = std::vector<ControlPtr>;
 
     const std::string& className() const noexcept override;
 
-    Control* add(ControlPtr control,int index=-1);
+    Control* add(ControlPtr control, int index = -1);
 
     template <class T>
-    T* add2(std::unique_ptr<T> control,int index=-1) {
-        T* p=control.get();
-        add(std::move(control),index);
+    T* add2(std::unique_ptr<T> control, int index = -1) {
+        T* p = control.get();
+        add(std::move(control), index);
         return p;
     }
 
@@ -60,20 +59,12 @@ public:
     // bool dispatchMouseEvent(const MouseEvent& event) override;
     bool dispatchMouseMoveEvent(const MouseEvent& event) override;
 protected:
-
-
     ChildrenList mChildren;
 
     void onLayout(const UIRect& pos) override;
     void onMeasure(Canvas& canvas, const UISize& available, const UISize& max) override;
     void dispatchDraw(Canvas& renderer) override;
     void dispatchRemoved(Control* removed);
-
-
-
-private:
-    // Renderer* mTmpRenderer=nullptr;
-    // padding  background(color bitmap svg)
 };
 
 using LayoutPtr = std::unique_ptr<Layout>;

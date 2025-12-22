@@ -36,7 +36,7 @@ public:
     void discardCanvas() override;
 
 protected:
-    ColorBrushPtr mBrush = nullptr;
+    PenPtr mTextPen = nullptr;
     TextPaintPtr mTextPaint = nullptr;
     Color mTextColor = colors::Black;
 

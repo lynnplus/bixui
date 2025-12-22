@@ -131,6 +131,7 @@ public:
     void setHovered(bool hovered);
 
     void setBorder(BorderPtr border);
+    void setBorderRadius(int radius);
 
     // Trim the drawing range of the control and do not draw beyond the range.
     void setBoundsClip(bool enable);
