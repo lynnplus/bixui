@@ -20,15 +20,12 @@
 
 namespace bix {
 
-D2DSolidColorBrush::D2DSolidColorBrush(DSolidColorBrushPtr b, ID2D1RenderTarget* rt, uintptr_t id)
-    : D2DBasicBrush(rt, id), mBrushImpl(std::move(b)) {}
-
 void D2DSolidColorBrush::setColor(const Color& color) { mBrushImpl->SetColor(convert_to_DColorF(color)); }
 
 Color D2DSolidColorBrush::color() const noexcept {
-    // TODO not implemented
-    return {};
+    D2D1_COLOR_F color{0, 0, 0, 0};
+    mBrushImpl->GetColor(&color);
+    return convert_from_DColor(color);
 }
 
-ID2D1Brush* D2DSolidColorBrush::current() const { return mBrushImpl.get(); }
 } // namespace bix

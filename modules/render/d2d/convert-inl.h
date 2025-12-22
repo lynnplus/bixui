@@ -51,6 +51,11 @@ inline D2D1_COLOR_F convert_to_DColorF(const Color& src) {
     return {to(src.red()), to(src.green()), to(src.blue()), to(src.alpha())};
 }
 
+inline Color convert_from_DColor(const D2D1_COLOR_F& src) {
+    auto to = [](float v) { return static_cast<int>(v * 255.f); };
+    return {to(src.r), to(src.g), to(src.b), to(src.a)};
+}
+
 inline D2D1_MATRIX_3X2_F convert_to_DMatrix(const Transform& transform) {
     auto data = transform.data();
     return D2D1::Matrix3x2F(data[0], data[1], data[3], data[4], data[6], data[7]);
