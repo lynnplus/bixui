@@ -15,7 +15,10 @@
  */
 
 #pragma once
+#include "bixlib/geometry/shape.h"
 #include "bixlib/render/canvas.h"
+#include "bixlib/utils/flags.h"
+#include "length.h"
 
 namespace bix {
 
@@ -24,8 +27,8 @@ namespace bix {
  */
 class BorderStroke {
 public:
-    Color color;   ///< The color of the border stroke.
-    int width = 0; ///< The width of the border stroke,default value is 0, indicating no border.
+    Color color = colors::White; ///< The color of the border stroke.
+    int width = 0;               ///< The width of the border stroke,default value is 0, indicating no border.
     LineStyle lineStyle = LineStyle::Solid; ///< The line style of the border stroke,default is solid line
     /**
      * Indicates whether the border stroke overlays the content area.
@@ -43,22 +46,46 @@ public:
     }
 };
 
-enum class BorderShape {
-    None,
-    Rectangle,
-    RoundedRectangle,
-    Ellipse,
-    Complex
+enum class BorderFlag : uint8_t {
+    Dirty = 1 << 0,
+    SetEllipse = 1 << 1,
+    HasLeft = 1 << 2,
+    HasRight = 1 << 3,
+    HasTop = 1 << 4,
+    HasBottom = 1 << 5,
+
+    HasAll = 0b0011'1100, ///< left|right|top|bottom
+};
+BIX_DECLARE_ENUM_FLAGS(BorderFlag)
+
+struct BorderRadius {
+    Length radiusX, radiusY;
 };
 
 class BIX_PUBLIC Border {
 public:
+    using BorderFlags = Flags<BorderFlag>;
     virtual ~Border() = default;
 
-    Border() = default;
-    explicit Border(const BorderStroke& stroke, int radius = 0);
-    Border(int left, int top, int right, int bottom);
-    Border(const BorderStroke& left, const BorderStroke& top, const BorderStroke& right, const BorderStroke& bottom);
+    Border() = delete;
+    // explicit Border(const BorderStroke& stroke, int radius = 0);
+    // Border(int left, int top, int right, int bottom,const Color& color);
+
+    // Border(const BorderStroke& left, const BorderStroke& top, const BorderStroke& right, const BorderStroke& bottom);
+
+    Border& setStroke(const BorderStroke& stroke);
+    Border& setLeft(const BorderStroke& stroke);
+    Border& setTop(const BorderStroke& stroke);
+    Border& setRight(const BorderStroke& stroke);
+    Border& setBottom(const BorderStroke& stroke);
+
+    Border& setRadius(const Length& radius);
+    Border& setRadius(const Length& rx, const Length& ry);
+
+    // Border& setTopLeftRadius(const Length& x, const Length& y);
+    // Border& setTopRightRadius(const Length& x, const Length& y);
+    // Border& setBottomLeftRadius(const Length& x, const Length& y);
+    // Border& setBottomRightRadius(const Length& x, const Length& y);
 
     /**
      * Get the internal padding occupied by the border
@@ -70,25 +97,22 @@ public:
      * @return the UIPaddings object representing the padding
      */
     virtual UIPaddings insets() const;
+    virtual UIFlexRoundedRect makeRect(const UIRect& rect) const noexcept;
 
-    Border& setRadius(int radius);
-    Border& setLeft(const BorderStroke& stroke);
-    Border& setTop(const BorderStroke& stroke);
-    Border& setRight(const BorderStroke& stroke);
-    Border& setBottom(const BorderStroke& stroke);
-
+    virtual void reset();
     virtual void onDraw(const UIRect& rect, Canvas& canvas);
     virtual void onDiscardCanvas();
 
 protected:
-    CornerRadius<int> mTopLeftRadius, mTopRightRadius, mBottomLeftRadius, mBottomRightRadius;
+    BorderRadius mTopLeftRadius, mTopRightRadius, mBottomLeftRadius, mBottomRightRadius;
     BorderStroke mLeft, mTop, mRight, mBottom;
-    BorderShape mShape = BorderShape::None;
-    bool mDirty = true;
+    BorderFlags mFlags{BorderFlag::Dirty};
+    float mEllipseRadiusX = 0, mEllipseRadiusY = 0;
+    ShapeType mShapeType = ShapeType::None;
     PenPtr mLeftPen, mTopPen, mRightPen, mBottomPen;
 
 private:
-    void updateShape();
+    void update();
 };
 
 using BorderPtr = std::unique_ptr<Border>;
