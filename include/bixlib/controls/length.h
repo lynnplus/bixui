@@ -96,53 +96,43 @@ struct SpecSize {
 
 class Length {
 public:
-    constexpr static int FLOAT_FACTOR=100;
+    constexpr static int FLOAT_FACTOR = 100;
 
     enum Unit {
         None,
         Dp,
         Px,
         Percentage,
-        Vw,//Relative to canvas width
-        Vh,//Relative to canvas height
+        Vw, // Relative to canvas width
+        Vh, // Relative to canvas height
     };
 
-    static Length fromDp(int dp) {
-        return {(dp * FLOAT_FACTOR),Dp};
-    }
+    static Length fromDp(int dp) { return {(dp * FLOAT_FACTOR), Dp}; }
 
-    static Length fromDp(float dp) {
-        return {static_cast<int>(dp * FLOAT_FACTOR),Dp};
-    }
+    static Length fromDp(float dp) { return {static_cast<int>(dp * FLOAT_FACTOR), Dp}; }
 
-    static Length fromPx(int px) {
-        return {px,Px};
-    }
+    static Length fromPx(int px) { return {px, Px}; }
 
-    //percentage in [0.00,100.00] as 0%~100%
-    static Length fromPercentage(float percentage) {
-        return {static_cast<int>(percentage * FLOAT_FACTOR),Percentage};
-    }
+    // percentage in [0.00,100.00] as 0%~100%
+    static Length fromPercentage(float percentage) { return {static_cast<int>(percentage * FLOAT_FACTOR), Percentage}; }
 
-    Length(float value,Unit unit):mUnit(unit) {
+    Length(float value, Unit unit) : mUnit(unit) {
         switch (unit) {
         case None:
             break;
         case Px:
-            mNumber=static_cast<int>(value);
+            mNumber = static_cast<int>(value);
             break;
         case Dp:
         case Percentage:
         case Vw:
         case Vh:
-            mNumber=static_cast<int>(value * FLOAT_FACTOR);
+            mNumber = static_cast<int>(value * FLOAT_FACTOR);
             break;
         }
     }
 
-    bool operator==(const Length& rhs) {
-        return mNumber == rhs.mNumber && mUnit == rhs.mUnit;
-    }
+    bool operator==(const Length& rhs) { return mNumber == rhs.mNumber && mUnit == rhs.mUnit; }
 
 private:
     int mNumber = 0;
@@ -151,17 +141,12 @@ private:
     Length(int number, Unit unit) : mNumber(number), mUnit(unit) {}
 };
 
-
 namespace length_literals {
 
-inline Length operator ""_dp(long double value) {
-    return Length::fromDp(static_cast<float>(value));
-}
+inline Length operator""_dp(long double value) { return Length::fromDp(static_cast<float>(value)); }
 
-inline Length operator ""_percent(long double value) {
-    return Length::fromPercentage(static_cast<float>(value));
-}
+inline Length operator""_percent(long double value) { return Length::fromPercentage(static_cast<float>(value)); }
 
-}
+} // namespace length_literals
 
 } // namespace bix
