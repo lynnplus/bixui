@@ -17,7 +17,6 @@
 #pragma once
 
 #include "bixlib/render/color.h"
-#include "bixlib/render/unsafe.h"
 
 #include <memory>
 
@@ -53,7 +52,8 @@ public:
      * @return The BrushStyle enum value representing the brush's style
      */
     virtual BrushStyle style() const noexcept = 0;
-    virtual bool handle(UnsafeHandle& p) noexcept = 0;
+
+    virtual bool testCast(uintptr_t scope, long castId) const noexcept = 0;
 };
 
 using BrushPtr = std::unique_ptr<Brush>;

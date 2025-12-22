@@ -38,6 +38,8 @@ public:
 
     IDWriteTextFormat* createFont();
 
+    IDWriteFactory* writeFactory() const noexcept;
+
 protected:
     DFactorPtr mD2DFactory = nullptr;
     DWriteFactoryPtr mDWriteFactory = nullptr;

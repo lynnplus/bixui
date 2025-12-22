@@ -16,7 +16,7 @@
 
 #pragma once
 #include "bixlib/geometry/rectangle.h"
-#include "bixlib/render/unsafe.h"
+#include "color.h"
 
 #include <string>
 
@@ -29,24 +29,31 @@ enum class TextDirection {
 };
 
 enum class WordWrapping {
-    WRAP,
-    NO_WRAP,
-    EMERGENCY_BREAK,
-    WHOLE_WORD,
-    CHARACTER
+    Wrap,
+    NoWrap,
+    EmergencyBreak,
+    WholeWord,
+    Character
 };
 
 enum class FontStyle {
-    NORMAL,
-    OBLIQUE,
-    ITALIC
+    Normal,
+    Oblique,
+    Italic
 };
 
 enum class TextAlignment {
-    DWRITE_TEXT_ALIGNMENT_LEADING,
-    DWRITE_TEXT_ALIGNMENT_TRAILING,
-    DWRITE_TEXT_ALIGNMENT_CENTER,
-    DWRITE_TEXT_ALIGNMENT_JUSTIFIED
+    Leading,
+    Trailing,
+    Center,
+    Justified
+};
+
+enum class TextTrimming {
+    None, // overflow
+    Clip,
+    Ellipsis,
+    Character, // custom character
 };
 
 class TextPaint {
@@ -54,15 +61,16 @@ public:
     virtual ~TextPaint() = default;
     virtual void setText(const std::string& text) = 0;
     virtual void setFontFamily(const std::string& name) = 0;
-    virtual void setBounds(const UIRect& boundingBox) = 0;
+    virtual void setMaxSize(const UISize& maxSize) = 0;
+    virtual void setMaxWidth(int w) = 0;
+    virtual void setMaxHeight(int h) = 0;
     virtual void setTextSize(float size) = 0;
     virtual void setFontWeight(int weight) = 0;
     virtual void setWordWrapping(WordWrapping wrap) = 0;
     virtual void setFontStyle(FontStyle style) = 0;
+    virtual void setTrimming(TextTrimming trimming) = 0;
 
-    virtual bool handle(UnsafeHandle& p) noexcept = 0;
-
-    virtual const UIRect& bounds() const = 0;
+    virtual bool testCast(uintptr_t scope, long castId) const noexcept = 0;
 };
 
 using TextPaintPtr = std::unique_ptr<TextPaint>;

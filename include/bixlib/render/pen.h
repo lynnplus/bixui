@@ -17,7 +17,6 @@
 #pragma once
 
 #include "bixlib/render/color.h"
-#include "bixlib/render/unsafe.h"
 
 #include <vector>
 
@@ -49,7 +48,7 @@ class BIX_PUBLIC Pen {
 public:
     virtual ~Pen() = default;
     virtual void setColor(const Color& c) = 0;
-    virtual void setStrokeWidth(int w) = 0;
+    virtual void setStrokeWidth(int w) = 0; // unit px
     virtual void setLineStyle(LineStyle style) = 0;
     virtual void setLineJoin(LineJoinStyle lineJoin) = 0;
     virtual void setLineCap(CapStyle start, CapStyle end, CapStyle dash) = 0;
@@ -74,7 +73,7 @@ public:
      */
     virtual int strokeWidth() const noexcept = 0;
 
-    virtual bool handle(UnsafeHandle& p) noexcept = 0;
+    virtual bool testCast(uintptr_t scope, long castId) const noexcept = 0;
 };
 
 /**

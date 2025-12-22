@@ -25,7 +25,7 @@ namespace bix {
  */
 template <Arithmetic T>
 struct BIX_PUBLIC Ellipse {
-    Point<T> point;
+    Point<T> point; // center
     T radiusX;
     T radiusY;
 };

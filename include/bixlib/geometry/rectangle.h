@@ -17,8 +17,8 @@
 #pragma once
 
 #include "bixlib/geometry/point.h"
+#include "bixlib/geometry/shape.h"
 #include "bixlib/geometry/size.h"
-#include "rectangle.h"
 
 namespace bix {
 
@@ -211,6 +211,12 @@ public:
     T radiusX = 0; ///< Horizontal radius
     T radiusY = 0; ///< Vertical radius
 
+    CornerRadius() = default;
+
+    explicit CornerRadius(T radius) : CornerRadius(radius, radius) {}
+
+    CornerRadius(T rx, T ry) : radiusX(rx), radiusY(ry) {}
+
     /**
      * Set radius
      * @param[in] radius New radius value
@@ -218,6 +224,12 @@ public:
      */
     CornerRadius& setRadius(T radius) noexcept {
         radiusX = radiusX = radius;
+        return *this;
+    }
+
+    CornerRadius& setRadius(T rx, T ry) noexcept {
+        radiusX = rx;
+        radiusY = ry;
         return *this;
     }
 
@@ -240,8 +252,13 @@ public:
      */
     constexpr bool isValid() const noexcept { return radiusX >= 0 && radiusY >= 0; }
 
-    // TODO float
-    bool operator==(const CornerRadius& rhs) const noexcept { return radiusX == rhs.radiusX && radiusY == rhs.radiusY; }
+    constexpr bool operator==(const CornerRadius& rhs) const noexcept {
+        if constexpr (std::is_integral_v<T>) {
+            return radiusX == rhs.radiusX && radiusY == rhs.radiusY;
+        } else {
+            return fuzzyCompareEqual(radiusX, rhs.radiusX) && fuzzyCompareEqual(radiusY, rhs.radiusY);
+        }
+    }
 };
 
 template <Arithmetic T>
@@ -262,10 +279,48 @@ public:
 
 using UIRoundRect = RoundedRect<int>;
 
+// Flexible Rectangle
+template <Arithmetic T>
+class FlexRoundedRect : public Rect<T> {
+public:
+    CornerRadius<T> tl, tr, bl, br;
+
+    void setRadius(CornerRadius<T> radius) noexcept {
+        tl = radius;
+        tr = radius;
+        bl = radius;
+        br = radius;
+    }
+
+    [[nodiscard]]
+    ShapeType shape() const {
+        if (tl==tr && tl==bl && tl==br) {
+            if (tl.isEmpty()) {
+                return ShapeType::Rectangle;
+            }
+            if (tl.radiusX>=this->width()/2&&tl.radiusY>=this->height()/2) {
+                // return ShapeType::Ellipse;
+            }
+            return ShapeType::RoundedRectangle;
+        }
+        return ShapeType::FlexRoundedRectangle;
+    }
+};
+
+using UIFlexRoundedRect = FlexRoundedRect<int>;
+
 template <Arithmetic T>
 class BIX_PUBLIC Margins {
 public:
     T left = 0, top = 0, right = 0, bottom = 0;
+
+    Margins() = default;
+
+    explicit Margins(T value) : Margins(value, value, value, value) {}
+
+    Margins(T leftRight, T topBottom) : Margins(leftRight, topBottom, leftRight, topBottom) {}
+
+    Margins(T left, T top, T right, T bottom) : left(left), top(top), right(right), bottom(bottom) {}
 
     T totalX() const noexcept { return left + right; }
 

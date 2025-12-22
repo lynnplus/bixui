@@ -18,51 +18,52 @@
 #include "bixlib/render/pen.h"
 #include "brush.h"
 
-namespace bix
-{
-    class D2DPen : public Pen
-    {
-    public:
-        D2DPen(DSolidColorBrushPtr brush, ID2D1Factory* factory, const Color& c, uintptr_t id);
+namespace bix {
 
-        void setStrokeWidth(int w) override;
-        void setColor(const Color& c) override;
-        void setMiterLimit(float limit) override;
-        void setDashOffset(float dashOffset) override;
-        void setLineStyle(LineStyle style) override;
-        void setLineJoin(LineJoinStyle lineJoin) override;
-        void setLineCap(CapStyle start, CapStyle end, CapStyle dash) override;
-        void setStartCap(CapStyle start) override;
-        void setEndCap(CapStyle end) override;
-        void setDashCap(CapStyle dash) override;
-        void setCustomDash(const std::vector<float>& dashes) override;
-        bool handle(UnsafeHandle& p) noexcept override;
-        int strokeWidth() const noexcept override;
-        const Color& color() const noexcept override;
+constexpr static long D2DPen_CAST_ID = 1766411953L;
 
-        ID2D1Brush* brush() const noexcept;
-        ID2D1StrokeStyle* strokeStyle() const noexcept;
+class D2DPen : public Pen {
+public:
+    D2DPen(DSolidColorBrushPtr brush, const Color& c, uintptr_t scopeId);
 
-    protected:
-        void createStrokeStyle();
-        bool shouldCreate() const;
+    void setStrokeWidth(int w) override;
+    void setColor(const Color& c) override;
+    void setMiterLimit(float limit) override;
+    void setDashOffset(float dashOffset) override;
+    void setLineStyle(LineStyle style) override;
+    void setLineJoin(LineJoinStyle lineJoin) override;
+    void setLineCap(CapStyle start, CapStyle end, CapStyle dash) override;
+    void setStartCap(CapStyle start) override;
+    void setEndCap(CapStyle end) override;
+    void setDashCap(CapStyle dash) override;
+    void setCustomDash(const std::vector<float>& dashes) override;
+    bool testCast(uintptr_t scope, long castId) const noexcept override;
+    int strokeWidth() const noexcept override;
+    const Color& color() const noexcept override;
 
-    private:
-        DSolidColorBrushPtr mBrush = nullptr;
-        ID2D1Factory* mFactory = nullptr;
-        Color mColor;
-        const uintptr_t mId;
-        int mStrokeWidth = 0;
-        DStrokeStylePtr mStrokeStyle = nullptr;
+    D2DPen* prepare();
+    ID2D1Brush* brush() const noexcept;
+    ID2D1StrokeStyle* strokeStyle() const noexcept;
 
-        // default
-        LineStyle mLineStyle{LineStyle::Solid};
-        CapStyle mStartCap{CapStyle::Flat};
-        CapStyle mEndCap{CapStyle::Flat};
-        CapStyle mDashCap{CapStyle::Flat};
-        LineJoinStyle mJoinStyle{LineJoinStyle::Miter};
-        std::vector<float> mDashes;
-        float mMiterLimit = 10.0f;
-        float mDashOffset = 0.0f;
-    };
+protected:
+    void createStrokeStyle();
+    bool shouldCreate() const;
+
+private:
+    DSolidColorBrushPtr mBrush = nullptr;
+    Color mColor;
+    const uintptr_t mScopeId;
+    int mStrokeWidth = 0;
+    DStrokeStylePtr mStrokeStyle = nullptr;
+
+    // default
+    LineStyle mLineStyle{LineStyle::Solid};
+    CapStyle mStartCap{CapStyle::Flat};
+    CapStyle mEndCap{CapStyle::Flat};
+    CapStyle mDashCap{CapStyle::Flat};
+    LineJoinStyle mJoinStyle{LineJoinStyle::Miter};
+    std::vector<float> mDashes;
+    float mMiterLimit = 10.0f;
+    float mDashOffset = 0.0f;
+};
 } // namespace bix

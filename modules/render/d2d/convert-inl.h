@@ -36,7 +36,7 @@ inline D2D1_RECT_F convert_to_DRectF(const Rect<int>& src) {
 
 inline D2D1_RECT_F convert_to_DRectF(const Rect<float>& src) { return {src.x1, src.y1, src.x2, src.y2}; }
 
-inline D2D1_ROUNDED_RECT convert_to_DRoundRect(const Rect<float>& src, int radiusX, int radiusY) {
+inline D2D1_ROUNDED_RECT convert_to_DRoundRect(const Rect<int>& src, int radiusX, int radiusY) {
     return {convert_to_DRectF(src), numeric_cast<float>(radiusX), numeric_cast<float>(radiusY)};
 }
 

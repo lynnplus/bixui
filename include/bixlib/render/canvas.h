@@ -24,11 +24,6 @@
 
 namespace bix {
 
-struct ClipRoundRect {
-    UIRect rect;
-    int radius;
-};
-
 struct TextMetrics {
     int minWidth;
     int width;
@@ -36,29 +31,107 @@ struct TextMetrics {
     int lineCount;
 };
 
+enum class DrawResult {
+    Success,
+    Error,
+    RecreateCanvas
+};
+
+/**
+ * @class Canvas
+ * @brief interface base class for rendering graphics on a 2D surface.
+ *
+ * The Canvas class provides a virtual interface for drawing operations on a 2D canvas.
+ * It defines a set of pure virtual methods that must be implemented by derived classes
+ * to support specific rendering backends (e.g., software rendering, GPU acceleration).
+ *
+ * Key Features:
+ * - Supports basic drawing primitives: rectangles, ellipses, lines, and text.
+ * - Manages drawing state through transformation matrices and clipping regions.
+ * - Provides resource creation methods for brushes, pens, and text paints.
+ * - Abstracts platform-specific rendering details, enabling cross-platform compatibility.
+ *
+ * Usage:
+ * 1. Implement derived classes for specific rendering engines (e.g., OpenGLCanvas, SkiaCanvas).
+ * 2. Use Canvas methods to perform drawing operations in a device-independent manner.
+ * 3. Manage canvas lifecycle with beginDraw() and endDraw() for efficient rendering.
+ *
+ * @note When the drawing operation unit is not explicitly stated, the default operation unit is px.
+ *
+ * @note This class is part of the BIX graphics library and is intended for internal use.
+ * External developers should interact with Canvas through its public interface.
+ */
 class BIX_PUBLIC Canvas {
 public:
     virtual ~Canvas() = default;
 
+    /**
+     * Retrieves the current size of the canvas.
+     * @return The size of the canvas as a SizeF object.
+     */
     virtual SizeF size() const noexcept = 0;
-
+    /**
+     * Begins the drawing process on the canvas.
+     * This method should be called before any drawing operations.
+     */
     virtual void beginDraw() = 0;
-    virtual void endDraw() = 0;
-
-    virtual void resize(const SizeF& size) = 0;
+    /**
+     * Ends the drawing process on the canvas.
+     * This method should be called after all drawing operations are completed.
+     */
+    virtual DrawResult endDraw() = 0;
+    /**
+     * Resizes the canvas to the specified dimensions.
+     * @param[in] size The new size for the canvas.
+     */
+    virtual void resize(const UISize& size) = 0;
+    /**
+     * Clears the canvas with the specified color.
+     * @param[in] c The color used to clear the canvas.
+     */
     virtual void clear(const Color& c) = 0;
+    /**
+     * Sets the transformation matrix for the canvas.
+     * @param[in] transform The transformation matrix to apply.
+     */
     virtual void setTransform(const Transform& transform) = 0;
 
+    /**
+     * Creates a color brush for drawing operations.
+     * @param[in] color The color of the brush.
+     * @return A unique pointer to the created ColorBrush.
+     */
     [[nodiscard]]
     virtual ColorBrushPtr createColorBrush(const Color& color) = 0;
+    /**
+     * Creates a pen for drawing operations.
+     * @param[in] color The color of the pen.
+     * @return A unique pointer to the created Pen.
+     */
     [[nodiscard]]
     virtual PenPtr createPen(const Color& color) = 0;
+    /**
+     * Creates a text paint object for text rendering.
+     * @return A unique pointer to the created TextPaint.
+     */
     [[nodiscard]]
     virtual TextPaintPtr createTextPaint() = 0;
 
-    virtual void pushClip(const UIRoundRect& rect) = 0;
+    /**
+     * Pushes a clipping region onto the canvas.
+     * @param[in] rect The rectangular region to clip.
+     * @return True if the clipping region was successfully pushed, false otherwise.
+     */
+    virtual bool pushClip(const UIFlexRoundedRect& rect) = 0;
+    /**
+     * Pops the top clipping region from the canvas.
+     */
     virtual void popClip() = 0;
-
+    /**
+     * Fills a rectangle on the canvas with a brush.
+     * @param[in] rect The rectangle to fill.
+     * @param[in] brush The brush used for filling.
+     */
     virtual void fillRectangle(const UIRect& rect, Brush& brush) = 0;
 
     /**
@@ -70,20 +143,41 @@ public:
      * @param[in] rect The Rect object defining the rectangle's position and size.
      * @param[in] pen The Pen object specifying the line style, color, and width of the outline.
      *
-     * @note The rectangular outline is drawn along the coordinates provided by Rect,
-     * extending from the edge inwards by the width (Pen::strokeWidth()) of the Pen,
-     * occupying the inner area.
-     * @warning If the Rect object is invalid (e.g., negative dimensions), the behavior is undefined.
-     * If the Pen's width is 0, the rectangle will not be drawn.
      */
     virtual void drawRectangle(const UIRect& rect, Pen& pen) = 0;
-
+    /**
+     * Draws a rounded rectangle outline on the canvas.
+     * @param[in] rect The rectangle to draw.
+     * @param[in] radiusX The horizontal radius of the rounded corners.
+     * @param[in] radiusY The vertical radius of the rounded corners.
+     * @param[in] pen The pen used for drawing the outline.
+     */
     virtual void drawRoundRect(const UIRect& rect, int radiusX, int radiusY, Pen& pen) = 0;
+    /**
+     * Draws an ellipse outline on the canvas.
+     * @param[in] ellipse The ellipse to draw.
+     * @param[in] pen The pen used for drawing the outline.
+     */
     virtual void drawEllipse(const UIEllipse& ellipse, Pen& pen) = 0;
-
+    /**
+     * Measures the metrics of a text string.
+     * @param[in] format The text paint object.
+     * @param[out] metrics The text metrics object to store the results.
+     */
     virtual void measureText(TextPaint& format, TextMetrics& metrics) = 0;
-    virtual void drawText(const UIPoint& origin, TextPaint& text, Brush& brush) = 0;
-    virtual void drawLine(const UIPoint& p0, const UIPoint& p1, Pen& pen) = 0;
+    /**
+     * Draws text on the canvas.
+     * @param[in] origin The starting point for the text.
+     * @param[in] text The text paint object.
+     * @param[in] pen The pen used for text rendering.
+     */
+    virtual void drawText(const UIPoint& origin, TextPaint& text, Pen& pen) = 0;
+    virtual void drawLine(const UILine& line, Pen& pen) = 0;
+    /**
+     * Draws multiple lines on the canvas.
+     * @param[in] lines The vector of lines to draw.
+     * @param[in] pen The pen used for drawing the lines.
+     */
     virtual void drawLines(const std::vector<UILine>& lines, Pen& pen) = 0;
 
     // void drawPolyline();
