@@ -13,18 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #pragma once
 
 #include <bit>
 #include <bitset>
+#include <climits>
 #include <initializer_list>
 #include <type_traits>
 
 namespace bix {
 /**
- *
- * a type-safe bit flags container for enumeration types
+ * a type-safe bit flags container for enumeration types.
  *
  * This template class provides a type-safe wrapper for managing bit flags
  * using enumeration types. It ensures that only valid enum values can be used
@@ -35,10 +34,22 @@ namespace bix {
  * - must be an enumeration type
  * - underlying type must be unsigned
  *
- * @note All operations are constexpr and can be evaluated at compile-time
- * @note All methods are noexcept and guarantee not to throw exceptions
- * @note Designed for enumeration values that are powers of two (1<<0, 1<<1, etc.)
+ * @note All operations are constexpr and can be evaluated at compile-time.
+ * @note All methods are noexcept and guarantee not to throw exceptions.
+ * @note Designed for enumeration values that are powers of two (1<<0, 1<<1, etc.).
+ * @note Ensure all enum members represent a single bit (power of two).
+ * providing combined values (bitmasks) in the enum definition may lead to logical ambiguity in functions like
+ * testFlag()
  * @see std::bitset for similar functionality with dynamic size
+ * @see BIX_DECLARE_ENUM_FLAGS - Use this macro to register your enum and
+ * enable bitwise operators (like '|') to work seamlessly with this class.
+ *
+ * @code
+ * enum class MyFlag : uint32_t { A = 1 << 0, B = 1 << 1 };
+ * BIX_DECLARE_ENUM_FLAGS(MyFlag)
+ * using MyFlags = Flags<MyFlag>;
+ * MyFlags fs = MyFlag::A | MyFlag::B;
+ * @endcode
  */
 template <class Enum>
 requires std::is_enum_v<Enum> && std::is_unsigned_v<std::underlying_type_t<Enum>>
@@ -110,6 +121,7 @@ public:
      * the current state of all flags in the container.
      * @tparam Size The size of the bitset, defaults to #MAX_SIZE
      * @return A std::bitset containing the current flag states
+     * @note Useful for debugging or serialization where a string representation of the bit pattern is required.
      */
     template <size_t Size = MAX_SIZE>
     constexpr std::bitset<Size> bits() const noexcept {
@@ -122,7 +134,10 @@ public:
      * @param[in] flag The enumeration value to test
      * @return true if the specified flag is set, false otherwise
      * @see testFlags()
-     * @note Special case: if the provided flag are #ZERO, returns true only if current flags' container are also #ZERO
+     * @warning Special case: If the provided flag is #ZERO, this returns true
+     * ONLY if the current flags' container is also empty (#ZERO). In most
+     * logic, testing for 'None' should be handled with #testAny() or explicit
+     * equality checks to avoid logical errors.
      */
     constexpr bool testFlag(Enum flag) const noexcept { return testFlags(Flags(flag)); }
 
@@ -136,10 +151,12 @@ public:
      * @param[in] flags The combination of enumeration flags to test
      * @return true if all specified flags are set, false otherwise
      * @note This function is constexpr and can be evaluated at compile-time
-     * @note Special case: if the provided flags are #ZERO, returns true only if current flags are also #ZERO
+     * @warning Special case: if the provided flags are #ZERO, returns true only if current flags are also #ZERO
      * @see testFlag(),testAnyFlags()
      * @warning The flags parameter must be a valid combination of enumeration values
-     *
+     * @warning Logic for #ZERO: If the input `flags` has a value of 0, this
+     * function returns `mValue == 0`. If your intention is to check if "at
+     * least these flags are set", ensure the input is not #ZERO.
      */
     constexpr bool testFlags(Flags flags) const noexcept {
         if (flags.mValue == ZERO) {
@@ -158,7 +175,7 @@ public:
      * @param[in] flags The combination of enumeration flags to test
      * @return true if any of the specified flags are set, false if none are set
      */
-    constexpr bool testAnyFlags(Flags flags) const noexcept { return (flags.mValue & flags.mValue) != ZERO; }
+    constexpr bool testAnyFlags(Flags flags) const noexcept { return (mValue & flags.mValue) != ZERO; }
 
     /**
      * Checks if any flag is set in the flags' container.
@@ -256,7 +273,6 @@ public:
      * Retains only the flags that are also set in the given Flags object
      * @param flags The Flags object whose flags should be retained
      * @return Reference to the modified flags object for method chaining
-     * @see #operator&=(Flags)
      */
     constexpr Flags& retainFlags(Flags flags) noexcept {
         mValue &= flags.mValue;
@@ -303,17 +319,16 @@ private:
     constexpr explicit Flags(ValueType value) noexcept { mValue = value; }
 };
 
-template <class Enum, class Enable = void>
-struct IsFlagsEnumType : std::false_type {};
-
-template <class Enum>
-requires IsFlagsEnumType<Enum>::value
-constexpr Flags<Enum> operator|(Enum lhs, Enum rhs) {
-    return Flags(lhs) | Flags(rhs);
-}
-
-#define BIX_DECLARE_ENUM_FLAGS(Enum)                  \
-    template <>                                       \
-    struct IsFlagsEnumType<Enum> : std::true_type {};
+/**
+ * @ingroup bix_macros
+ * @def BIX_DECLARE_ENUM_FLAGS(Enum)
+ * @brief Registers an enumeration type to enable type-safe bitwise operator support.
+ * @param Enum The name of the enumeration type to register.
+ */
+#define BIX_DECLARE_ENUM_FLAGS(Enum)                                  \
+    /* NOLINTNEXTLINE(bugprone-macro-parentheses) */                  \
+    inline constexpr bix::Flags<Enum> operator|(Enum lhs, Enum rhs) { \
+        return bix::Flags(lhs) | bix::Flags(rhs);                     \
+    }
 
 } // namespace bix
