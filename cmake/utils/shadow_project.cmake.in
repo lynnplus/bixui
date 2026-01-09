@@ -1,0 +1,29 @@
+cmake_minimum_required(VERSION @CMAKE_VERSION@)
+set(CMAKE_C_COMPILER_WORKS 1)
+set(CMAKE_CXX_COMPILER_WORKS 1)
+set(CMAKE_C_ABI_COMPILED 1)
+set(CMAKE_CXX_ABI_COMPILED 1)
+
+project(build-ext-@NAME@ NONE)
+
+include(ExternalProject)
+
+ExternalProject_Add(project
+        @DOWNLOAD_SOURCE@
+        PREFIX "@EXT_ROOT@"
+        INSTALL_DIR "@EXT_INSTALL_DIR@"
+        DOWNLOAD_NAME "@EXT_DOWNLOAD_NAME@"
+        STAMP_DIR "@EXT_STAMP_DIR@"
+        BINARY_DIR "@EXT_BINARY_DIR@"
+        SOURCE_DIR "@EXT_SOURCE_DIR@"
+        TIMEOUT "@EXT_TIMEOUT@"
+        DOWNLOAD_NO_PROGRESS ON
+        LIST_SEPARATOR "^^"
+        CMAKE_ARGS
+        "-C @EXT_ENV_BASE_FILE@"
+        "-DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>"
+        "@EXT_CMAKE_ARGS@"
+
+        @EXT_LOG_SETTING@
+        LOG_OUTPUT_ON_FAILURE 1
+)
