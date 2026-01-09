@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Lynn <lynnplus90@gmail.com>.
+ * Copyright (c) 2025-2026 Lynn <lynnplus90@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -325,10 +325,8 @@ private:
  * @brief Registers an enumeration type to enable type-safe bitwise operator support.
  * @param Enum The name of the enumeration type to register.
  */
-#define BIX_DECLARE_ENUM_FLAGS(Enum)                                  \
-    /* NOLINTNEXTLINE(bugprone-macro-parentheses) */                  \
-    inline constexpr bix::Flags<Enum> operator|(Enum lhs, Enum rhs) { \
-        return bix::Flags(lhs) | bix::Flags(rhs);                     \
-    }
+#define BIX_DECLARE_ENUM_FLAGS(Enum)                                                                              \
+    /* NOLINTNEXTLINE(bugprone-macro-parentheses) */                                                              \
+    inline constexpr bix::Flags<Enum> operator|(Enum lhs, Enum rhs) { return bix::Flags(lhs) | bix::Flags(rhs); }
 
 } // namespace bix
