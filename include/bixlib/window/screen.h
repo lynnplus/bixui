@@ -15,9 +15,9 @@
  */
 
 #pragma once
-#include "bixlib/geometry/point.h"
-#include "bixlib/geometry/rect.h"
-#include "bixlib/geometry/size.h"
+#include <bixlib/geometry/point.h>
+#include <bixlib/geometry/rect.h>
+#include <bixlib/geometry/size.h>
 
 #include <string>
 
