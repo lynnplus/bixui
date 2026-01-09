@@ -15,3 +15,18 @@
  */
 
 #pragma once
+
+
+/**
+ * @defgroup bix_macros Bixlib Macros
+ * @brief A complete collection of preprocessor utilities for framework-wide use.
+ * @details This module serves as a centralized hub for all public macros provided by
+ * the Bixlib framework. These macro tools are designed to:
+ * - **Simplify Boilerplate**: Reduce repetitive code during widget and type registration.
+ * - **Enhance Type Safety**: Bridge the gap between low-level C++ preprocessor and
+ * high-level template logic (e.g., @ref BIX_DECLARE_ENUM_FLAGS).
+ * - **Standardize Development**: Provide a unified set of tools that ensure
+ * consistency across different modules of the application.
+ * Developers should use these macros to integrate their custom types into the
+ * framework's ecosystem efficiently.
+ */

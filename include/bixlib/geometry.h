@@ -27,6 +27,6 @@
  * Collection of classes for 2D geometric operations
  */
 
-#include "bixlib/geometry/ellipse.h"
-#include "bixlib/geometry/point.h"
-#include "bixlib/geometry/rectangle.h"
+#include <bixlib/geometry/ellipse.h>
+#include <bixlib/geometry/point.h>
+#include <bixlib/geometry/rect.h>
