@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Lynn <lynnplus90@gmail.com>.
+ * Copyright (c) 2026 Lynn <lynnplus90@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,17 @@
  * limitations under the License.
  */
 
-#include "native_window.h"
+#pragma once
 
-#ifdef _WIN32
-    #include "win32/window.h"
+#undef BIX_HAS_LIBRARY
+
+#if defined(BIX_FMT_HEADER)
+    #define BIX_HAS_LIBRARY
+    #include BIX_FMT_HEADER
+#elif __has_include(<fmt/format.h>)
+    #define BIX_HAS_LIBRARY
+    #include <fmt/format.h>
+#elif __has_include(<spdlog/fmt/fmt.h>)
+    #define BIX_HAS_LIBRARY
+    #include <spdlog/fmt/fmt.h>
 #endif
-
-namespace bix {
-
-NativeWindowPtr NativeWindow::create(Window* w) { return std::make_unique<Win32Window>(w); }
-
-} // namespace bix
