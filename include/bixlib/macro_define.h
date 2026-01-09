@@ -16,7 +16,6 @@
 
 #pragma once
 
-
 /**
  * @defgroup bix_macros Bixlib Macros
  * @brief A complete collection of preprocessor utilities for framework-wide use.
