@@ -2,74 +2,59 @@ cmake_minimum_required(VERSION 3.26)
 
 project(bixlib VERSION 0.0.1 LANGUAGES CXX)
 
-#include(CMakeDependentOption)
+include(CMakeDependentOption)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_VISIBILITY_PRESET hidden)
-set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-option(BUILD_STATIC "build static library" ON)
-if (CMAKE_SYSTEM_NAME MATCHES "Windows")
-    option(bix_RENDER_WITH_D2D "support d2d as renderer" ON)
-    option(bix_RENDER_WITH_GDIPlus "support gdi+ as renderer" ON)
-endif ()
+
+option(BIX_BUILD_SHARED "Build bixlib as shared library" ON)
+option(BIX_BUILD_DOCS "Generate HTML documentation using Doxygen" ON)
+
+set(BIX_OUTPUT_NAME "bix" CACHE STRING "The output name of the generated library file")
+
+cmake_dependent_option(BIX_RENDERER_D2D "Enable Direct2D graphics backend" ON "WIN32" OFF)
+cmake_dependent_option(BIX_RENDERER_GDI "Enable GDI+ graphics backend." ON "WIN32" OFF)
+#cmake_dependent_option(BIX_RENDERER_METAL "Enable Metal" ON "APPLE" OFF)
 
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
-file(GLOB_RECURSE sourcesFiles RELATIVE ${PROJECT_SOURCE_DIR} modules/*.cpp modules/*.h)
+if (BIX_BUILD_DOCS)
+    include(cmake/GenDoc.cmake)
+endif ()
 
+if (ANDROID)
+    list(APPEND CMAKE_FIND_ROOT_PATH "${CMAKE_CURRENT_BINARY_DIR}")
+endif ()
 
-add_library(bix STATIC ${sourcesFiles})
+include(cmake/ModuleHelpers.cmake)
 
-target_include_directories(bix PRIVATE modules)
+set(BIX_TARGET_NAME "bixlib")
+set(BIX_HEADER_ROOT "${PROJECT_SOURCE_DIR}/include/bixlib")
 
-file(GLOB_RECURSE includeFiles RELATIVE ${PROJECT_SOURCE_DIR} include/*.h)
+if (BIX_BUILD_SHARED)
+    add_library(${BIX_TARGET_NAME} SHARED)
+else ()
+    add_library(${BIX_TARGET_NAME} STATIC)
+endif ()
 
-target_sources(bix PRIVATE ${includeFiles})
-
-target_compile_definitions(bix PUBLIC -DBIX_STATIC_DEFINE)
-set_target_properties(bix PROPERTIES
-        POSITION_INDEPENDENT_CODE ON
-        PUBLIC_HEADER "${BIX_HEADERS}"
-        DEFINE_SYMBOL BIX_EXPORTS
+target_include_directories(${BIX_TARGET_NAME} PUBLIC
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+)
+set_target_properties(${BIX_TARGET_NAME} PROPERTIES
+        CXX_VISIBILITY_PRESET hidden
+        VISIBILITY_INLINES_HIDDEN ON
+        OUTPUT_NAME "${BIX_OUTPUT_NAME}"
         DEBUG_POSTFIX "_d"
 )
 
-if (CMAKE_SYSTEM_NAME MATCHES "Windows")
-    target_compile_definitions(bix PRIVATE WIN32_LEAN_AND_MEAN)
-    #target_compile_definitions(bix PUBLIC WINVER=0xA00 _WIN32_WINNT=0xA00)
-    if (bix_RENDER_WITH_D2D)
-        target_link_libraries(bix PRIVATE d2d1.lib dwrite.lib)
-    endif ()
-endif ()
-
-if (MSVC)
-    target_compile_definitions(bix PUBLIC "UNICODE" "_UNICODE" PRIVATE "NOMINMAX")
-    target_compile_options(bix PUBLIC "/utf-8" PRIVATE "/W4" "/WX")
-else ()
-    target_compile_options(bix PUBLIC "-municode" PRIVATE
-            "-Wall" "-Wextra" "-pedantic" "-Wconversion" "-Wshadow" "-Wnonnull" "-Wfloat-equal" "-Werror"
-            "-pedantic-errors" "-Wold-style-cast" "-Wundef" "-Wzero-as-null-pointer-constant" "-Wnull-dereference"
-            "-Wdeprecated" "-Woverloaded-virtual" "-Wcast-qual" "-Wwrite-strings" "-Wpointer-arith"
-            "-Wmissing-include-dirs" "-Wzero-as-null-pointer-constant"
-            "-Wmissing-field-initializers" "-Wuninitialized"
-            #            -Weverything "-Wpre-c++20-compat-pedantic" "-Wreserved-identifier"
-    )
-endif ()
-
-
-target_include_directories(bix PUBLIC
-        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>
-)
-
+include(cmake/utils/AddExtDependency.cmake)
 include(cmake/FetchFmt.cmake)
-target_link_libraries(bix PRIVATE fmt::fmt)
+include(cmake/FetchSpdlog.cmake)
 
-include(cmake/FetchTinyXml.cmake)
-target_link_libraries(bix PRIVATE tinyxml2)
 
-#target_precompile_headers(bix PUBLIC <fmt/base.h> <fmt/std.h>)
-
+add_subdirectory(src)
 add_subdirectory(example)
+add_subdirectory(tests)
