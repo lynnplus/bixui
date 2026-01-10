@@ -28,7 +28,7 @@ macro(init_ext_dependency_env)
     #Shadow projects share the basic environment
     set(EXT_ENV_BASE_FILE "${EXT_DEP_BUILD_DIR}/env_base.cmake")
 
-    if (MSVC)
+    if (MSVC AND CMAKE_MSVC_RUNTIME_LIBRARY)
         set(EXT_OTHER_CMD "set(CMAKE_MSVC_RUNTIME_LIBRARY ${CMAKE_MSVC_RUNTIME_LIBRARY} CACHE STRING \"\" FORCE)")
     elseif (ANDROID)
         set(EXT_OTHER_CMD "
@@ -137,33 +137,33 @@ function(add_ext_dependency NAME)
     set(STAMP_FILE "${EXT_ROOT}/build_success.stamp")
     set(SHADOW_BUILD_LOG_FILE "${EXT_ROOT}/build_out.log")
     set(LOCAL_DOWNLOAD_DIR "${EXT_DEP_DOWNLOAD_DIR}/${NAME}")
-
+    set(EXT_EP_PROXY_BUILD_NAME "ep_proxy")
     if (NOT EXT_INSTALL_DIR)
         set(EXT_INSTALL_DIR "${EXT_ROOT}/install")
     endif ()
     init_ext_dependency_env()
 
     if (EXT_URL)
-        set(DOWNLOAD_SOURCE "URL ${EXT_URL} \n    URL_HASH ${EXT_URL_HASH}")
+        set(DOWNLOAD_SOURCE "URL ${EXT_URL} \n        URL_HASH ${EXT_URL_HASH}")
         if (EXT_URL MATCHES "^(http|https|ftp)://")
             println_msg("Remote URL: ${EXT_URL}")
-            set(DOWNLOAD_SOURCE "${DOWNLOAD_SOURCE}\n    DOWNLOAD_DIR \"${LOCAL_DOWNLOAD_DIR}\"")
+            set(DOWNLOAD_SOURCE "${DOWNLOAD_SOURCE}\n        DOWNLOAD_DIR \"${LOCAL_DOWNLOAD_DIR}\"")
         elseif (EXISTS "${EXT_URL}")
             println_msg("Local Source: ${EXT_URL}")
         endif ()
     elseif (EXT_GIT_REPO)
-        set(DOWNLOAD_SOURCE "GIT_REPOSITORY ${EXT_GIT_REPO} \n    GIT_TAG ${EXT_GIT_TAG}\n    GIT_SHALLOW ON")
+        set(DOWNLOAD_SOURCE "GIT_REPOSITORY ${EXT_GIT_REPO} \n        GIT_TAG ${EXT_GIT_TAG}\n        GIT_SHALLOW ON")
         println_msg("Git Source: ${EXT_GIT_REPO} (${EXT_GIT_TAG})")
     endif ()
     set(EXT_LOG_SETTING "")
     if (EXT_LOG_DOWNLOAD)
-        set(EXT_LOG_SETTING "${EXT_LOG_SETTING}\n    LOG_DOWNLOAD ON")
+        set(EXT_LOG_SETTING "${EXT_LOG_SETTING}\n        LOG_DOWNLOAD ON")
     endif ()
     if (EXT_LOG_CONFIGURE)
-        set(EXT_LOG_SETTING "${EXT_LOG_SETTING}\n    LOG_CONFIGURE ON")
+        set(EXT_LOG_SETTING "${EXT_LOG_SETTING}\n        LOG_CONFIGURE ON")
     endif ()
     if (EXT_LOG_BUILD)
-        set(EXT_LOG_SETTING "${EXT_LOG_SETTING}\n    LOG_BUILD ON")
+        set(EXT_LOG_SETTING "${EXT_LOG_SETTING}\n        LOG_BUILD ON")
     endif ()
 
 
@@ -172,10 +172,28 @@ function(add_ext_dependency NAME)
     #return argv xxx_INSTALL_DIR
     set(${NAME}_INSTALL_DIR "${EXT_INSTALL_DIR}" PARENT_SCOPE)
 
+
+    macro(clean_build)
+        if (EXT_KEEP_BUILD)
+            return()
+        endif ()
+        if (EXISTS "${EXT_BINARY_DIR}" OR EXISTS "${EXT_ROOT}/${EXT_EP_PROXY_BUILD_NAME}")
+            # Delete the actual library build directory (third layer)
+            file(REMOVE_RECURSE "${EXT_BINARY_DIR}")
+            # Delete the shadow project proxy directory (second layer)
+            file(REMOVE_RECURSE "${EXT_ROOT}/${EXT_EP_PROXY_BUILD_NAME}")
+        endif ()
+        if (EXISTS "${EXT_STAMP_DIR}")
+            file(REMOVE_RECURSE "${EXT_STAMP_DIR}")
+            file(REMOVE_RECURSE "${EXT_ROOT}/tmp")
+        endif ()
+    endmacro()
+
     if (EXISTS "${STAMP_FILE}" AND EXISTS "${EXT_INSTALL_DIR}/include")
         if ("${STAMP_FILE}" IS_NEWER_THAN "${EXT_ENV_BASE_FILE}" AND "${STAMP_FILE}" IS_NEWER_THAN "${EXT_ROOT}/CMakeLists.txt")
             println_msg("Cache hit. Skipping build.")
             println_msg("Found at: ${EXT_INSTALL_DIR}")
+            clean_build()
             return()
         endif ()
     endif ()
@@ -201,14 +219,16 @@ ${_LOG_TAIL}
         message(FATAL_ERROR "[${NAME}] External dependency ${step_name} failed.")
     endmacro()
 
-    if (EXISTS "${EXT_BINARY_DIR}/install_manifest.txt")
+    if (EXISTS "${EXT_ROOT}/install_manifest.txt")
         println_msg("Purging previous installation files via manifest...")
-        purify_external_install("${EXT_BINARY_DIR}/install_manifest.txt")
+        purify_external_install("${EXT_ROOT}/install_manifest.txt")
     endif ()
     file(REMOVE_RECURSE "${EXT_BINARY_DIR}")
+    file(REMOVE_RECURSE "${EXT_ROOT}/${EXT_EP_PROXY_BUILD_NAME}")
 
     println_msg("Configuring shadow project...")
-    set(EXT_EP_PROXY_BUILD_NAME "ep_proxy")
+
+
     execute_process(
             COMMAND ${CMAKE_COMMAND} -S . -B ${EXT_EP_PROXY_BUILD_NAME} -G "${CMAKE_GENERATOR}"
             WORKING_DIRECTORY "${EXT_ROOT}"
@@ -233,16 +253,15 @@ ${_LOG_TAIL}
         output_process_fail_msg("Build/Installing" ${res1})
     endif ()
 
+    if (EXISTS "${EXT_BINARY_DIR}/install_manifest.txt")
+        file(COPY_FILE "${EXT_BINARY_DIR}/install_manifest.txt" "${EXT_ROOT}/install_manifest.txt")
+    endif ()
+
     file(TOUCH "${STAMP_FILE}")
 
     string(TIMESTAMP _TIME_END "%s")
     math(EXPR _DUR "${_TIME_END} - ${_TIME_START}")
     println_msg("Completed(${_DUR}.0s). Artifacts Location: ${EXT_INSTALL_DIR}")
 
-    if (NOT EXT_KEEP_BUILD)
-        # Delete the actual library build directory (third layer)
-        file(REMOVE_RECURSE "${EXT_BINARY_DIR}")
-        # Delete the shadow project proxy directory (second layer)
-        file(REMOVE_RECURSE "${EXT_ROOT}/${EXT_EP_PROXY_BUILD_NAME}")
-    endif ()
+    clean_build()
 endfunction(add_ext_dependency)
