@@ -10,6 +10,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 option(BIX_BUILD_SHARED "Build bixlib as shared library" ON)
 option(BIX_BUILD_DOCS "Generate HTML documentation using Doxygen" ON)
+option(BIX_BUILD_EXAMPLES "Build example projects" ON)
+option(BIX_BUILD_TESTS "Build unit tests" ON)
 
 set(BIX_OUTPUT_NAME "bix" CACHE STRING "The output name of the generated library file")
 
@@ -31,24 +33,10 @@ endif ()
 include(cmake/ModuleHelpers.cmake)
 
 set(BIX_TARGET_NAME "bixlib")
-set(BIX_HEADER_ROOT "${PROJECT_SOURCE_DIR}/include/bixlib")
 
-if (BIX_BUILD_SHARED)
-    add_library(${BIX_TARGET_NAME} SHARED)
-else ()
-    add_library(${BIX_TARGET_NAME} STATIC)
-endif ()
+set(BIX_INCLUDE_BASE "${PROJECT_SOURCE_DIR}/include")
+set(BIX_HEADER_ROOT "${BIX_INCLUDE_BASE}/bixlib")
 
-target_include_directories(${BIX_TARGET_NAME} PUBLIC
-        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
-        $<INSTALL_INTERFACE:include>
-)
-set_target_properties(${BIX_TARGET_NAME} PROPERTIES
-        CXX_VISIBILITY_PRESET hidden
-        VISIBILITY_INLINES_HIDDEN ON
-        OUTPUT_NAME "${BIX_OUTPUT_NAME}"
-        DEBUG_POSTFIX "_d"
-)
 
 include(cmake/utils/AddExtDependency.cmake)
 include(cmake/FetchFmt.cmake)
@@ -56,5 +44,9 @@ include(cmake/FetchSpdlog.cmake)
 
 
 add_subdirectory(src)
-add_subdirectory(example)
-add_subdirectory(tests)
+if (BIX_BUILD_EXAMPLES)
+    add_subdirectory(example)
+endif ()
+if (BIX_BUILD_TESTS)
+    add_subdirectory(tests)
+endif ()

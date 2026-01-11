@@ -30,22 +30,60 @@ namespace bix {
  */
 class BIX_PUBLIC Screen {
 public:
+    /**
+     * A static snapshot of screen properties at a specific point in time.
+     *
+     * This structure is a plain-data representation of a screen's state. It is     * decoupled from the underlying
+     * system handles and is safe to be passed between threads or stored for configuration.
+     * @see Screen::snapshot() to obtain this data from a live Screen instance.
+     */
+    struct Data {
+        std::string id;
+        std::string name;
+        std::string deviceName;
+        Point position;
+        Size physicalSize;
+        Size logicalSize;
+        Rect workArea;
+        float scaleFactor;
+        int dpi;
+        int standardDPI;
+        int refreshRate;
+        int rotation;
+        bool isPrimary;
+    };
+
     virtual ~Screen() = default;
     /**
      * Returns a unique identifier for the screen.
      *
      * The ID is intended to be persistent across application sessions to
-     * identify the same physical or virtual device even after rebooting.
-     * @return A string containing the platform-specific unique identifier.
-     * @note The format of the ID depends on the backend (e.g., serial hash or UUID).
+     * identify the same physical or virtual device even after rebooting or
+     * reconnecting to different ports.
+     * @return A string containing the hardware instance path or serial-based ID.
+     * @note Ideal for saving window positions in configuration files.
      */
     virtual std::string id() const noexcept = 0;
     /**
      * Returns the user-friendly name of the screen.
      *
-     * @return A string representing the display name (e.g., "\\.\DISPLAY1").
+     * This is typically the manufacturer's model name, suitable for display
+     * in UI settings or menus.
+     * @return A string representing the monitor model (e.g., "SAMSUNG XXX").
      */
     virtual std::string name() const noexcept = 0;
+
+    /**
+     * Returns the logical device path assigned by the operating system.
+     *
+     * This string is used for direct calls to platform-specific low-level
+     * graphics APIs (e.g., ChangeDisplaySettings).
+     * @return A string representing the system logical name (e.g., "\\.\DISPLAY1").
+     * @warning This value is unstable and may change after a reboot or hardware
+     * hot-plugging. Do not use it for persistent storage.
+     */
+    virtual std::string deviceName() const noexcept = 0;
+
     /**
      * Checks if the screen is currently active and available for rendering.
      *
@@ -127,6 +165,15 @@ public:
      * @return The rotation angle in degrees (typically 0, 90, 180, or 270).
      */
     virtual int rotation() const noexcept = 0;
+
+    /**
+     * Captures all current screen properties into a static Data structure.
+     *     * Since the standard Screen interface methods query the OS in real-time,
+     * their values might change between calls (e.g., if the user moves the Taskbar).
+     * This method "freezes" the current state into a snapshot.
+     * @return A static Data object containing the current state of the screen.
+     */
+    virtual Data snapshot() const noexcept = 0;
 };
 
 /**
