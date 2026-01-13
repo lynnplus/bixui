@@ -189,8 +189,7 @@ private:
 };
 
 /**
- * @namespace bix::length_literals
- * @brief User-defined literals for expressive Length creation.
+ * User-defined literals for expressive Length creation.
  *
  * These literals allow you to write dimensions naturally, such as @c 16_dp or @c 50_percent.
  * To use these literals, add the following directive to your code:
@@ -199,7 +198,7 @@ private:
  * auto width = 100.5_dp;
  * @endcode
  */
-namespace length_literals {
+namespace literals {
 
 /**
  * Literal for creating a Length in Density-independent Pixels.

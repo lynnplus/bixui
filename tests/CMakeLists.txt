@@ -36,3 +36,7 @@ endmacro()
 
 add_executable(bix_utils_test utils/numeric_test.cpp)
 bix_test_setup(bix_utils_test)
+
+
+add_executable(bix_graphics_test graphics/color_test.cpp)
+bix_test_setup(bix_graphics_test)

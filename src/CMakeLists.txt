@@ -1,6 +1,6 @@
 
 
-set(BIX_SUB_MODULES utils core window)
+set(BIX_SUB_MODULES utils core window graphics)
 
 add_library(bix_build_config INTERFACE)
 add_library(bix::build_config ALIAS bix_build_config)
