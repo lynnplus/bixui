@@ -1,4 +1,4 @@
-
+include_guard()
 
 add_library(bix_internal_link_pool INTERFACE)
 

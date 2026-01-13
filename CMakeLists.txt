@@ -22,10 +22,6 @@ cmake_dependent_option(BIX_RENDERER_GDI "Enable GDI+ graphics backend." ON "WIN3
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
-if (BIX_BUILD_DOCS)
-    include(cmake/GenDoc.cmake)
-endif ()
-
 if (ANDROID)
     list(APPEND CMAKE_FIND_ROOT_PATH "${CMAKE_CURRENT_BINARY_DIR}")
 endif ()
@@ -36,6 +32,10 @@ set(BIX_TARGET_NAME "bixlib")
 
 set(BIX_INCLUDE_BASE "${PROJECT_SOURCE_DIR}/include")
 set(BIX_HEADER_ROOT "${BIX_INCLUDE_BASE}/bixlib")
+
+if (BIX_BUILD_DOCS)
+    include(cmake/DoxygenConfig.cmake)
+endif ()
 
 
 include(cmake/utils/AddExtDependency.cmake)

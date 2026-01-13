@@ -20,9 +20,18 @@ bix_module_add_headers(bix_window ${_window_headers})
 
 
 if (WIN32)
-    file(GLOB_RECURSE _win32_sources CONFIGURE_DEPENDS "backends/win32/*.h" "backends/win32/*.cpp")
-    target_sources(bix_window PRIVATE ${_win32_sources})
+    target_sources(bix_window PRIVATE
+            backends/win32/class_manager.cpp
+            backends/win32/class_manager.h
+            backends/win32/win32_encoding.cpp
+            backends/win32/win32_encoding.h
+            backends/win32/win32_screen.cpp
+            backends/win32/win32_screen.h
+            backends/win32/win32_utils.cpp
+            backends/win32/win32_utils.h
+            backends/win32/win32_window.cpp
+            backends/win32/win32_window.h
+    )
 endif ()
-
 
 #    target_compile_definitions(bix_build_config INTERFACE WINVER=0xA00 _WIN32_WINNT=0xA00)

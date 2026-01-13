@@ -46,11 +46,17 @@ set_target_properties(${BIX_TARGET_NAME} PROPERTIES
         DEBUG_POSTFIX "_d"
 )
 
-file(GLOB_RECURSE GEOMETRY_HEADERS CONFIGURE_DEPENDS "${BIX_HEADER_ROOT}/geometry/*.h")
-add_library(bix_geometry INTERFACE)
 
+add_library(bix_geometry INTERFACE)
 bix_module_setup(bix_geometry)
-bix_module_add_headers(bix_geometry "geometry.h" "${GEOMETRY_HEADERS}")
+bix_module_add_headers(bix_geometry "geometry.h"
+        "geometry/ellipse.h"
+        "geometry/line_segment.h"
+        "geometry/point.h"
+        "geometry/rect.h"
+        "geometry/shape.h"
+        "geometry/size.h"
+)
 
 target_include_directories(${BIX_TARGET_NAME} PUBLIC
         $<BUILD_INTERFACE:${BIX_INCLUDE_BASE}>

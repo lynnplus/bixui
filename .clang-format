@@ -8,8 +8,8 @@ PointerAlignment: Left
 ReferenceAlignment: Pointer
 DerivePointerAlignment: false
 AllowShortEnumsOnASingleLine: false
-#AllowShortFunctionsOnASingleLine: Inline
-AllowShortIfStatementsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: WithoutElse
 AllowShortBlocksOnASingleLine: Always
 AlignEscapedNewlines: LeftWithLastLine
 SeparateDefinitionBlocks: Always
@@ -49,3 +49,5 @@ BreakConstructorInitializers: BeforeComma
 BinPackArguments: false
 AlignAfterOpenBracket: BlockIndent
 AllowAllArgumentsOnNextLine: false
+AllowShortCompoundRequirementOnASingleLine: true
+AllowShortCaseLabelsOnASingleLine: true

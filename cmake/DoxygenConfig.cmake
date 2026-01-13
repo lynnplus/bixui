@@ -1,7 +1,8 @@
+include_guard()
 
-
-find_package(Doxygen)
+find_package(Doxygen REQUIRED)
 if (DOXYGEN_FOUND)
+    set(DOXYGEN_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/docs")
     set(DOXYGEN_JAVADOC_AUTOBRIEF YES)
     set(DOXYGEN_QUIET YES)
     set(DOXYGEN_HTML_COLORSTYLE "TOGGLE")
@@ -14,7 +15,8 @@ if (DOXYGEN_FOUND)
     set(DOXYGEN_USE_MDFILE_AS_MAINPAGE "README.md")
     set(DOXYGEN_SORT_BRIEF_DOCS NO)
     set(DOXYGEN_SORT_MEMBER_DOCS NO)
-    doxygen_add_docs(project_doc ${includeFiles} README.md ALL USE_STAMP_FILE)
+    #USE_STAMP_FILE
+    doxygen_add_docs(bix_docs ${PROJECT_SOURCE_DIR}/include ${PROJECT_SOURCE_DIR}/README.md COMMENT "Generating Doxygen documentation")
 else ()
     message(WARNING
             "Doxygen not found. Documentation will not be generated.
