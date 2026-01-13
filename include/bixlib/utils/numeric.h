@@ -56,20 +56,11 @@ __attribute__((noinline)) [[noreturn]] void dispatch_cast_error(From v, CastErro
         oss << v << ") ";
     }
     switch (err) {
-    case CastError::Overflow:
-        oss << "overflows";
-        throw std::overflow_error(oss.str());
-    case CastError::Underflow:
-        oss << "underflow";
-        throw std::underflow_error(oss.str());
-    case CastError::Inexact:
-        oss << "precision loss";
-        throw std::range_error(oss.str());
-    case CastError::IsNan:
-        oss << "isnan";
-        throw std::range_error(oss.str());
-    default:
-        [[unlikely]] std::abort();
+    case CastError::Overflow: oss << "overflows"; throw std::overflow_error(oss.str());
+    case CastError::Underflow: oss << "underflow"; throw std::underflow_error(oss.str());
+    case CastError::Inexact: oss << "precision loss"; throw std::range_error(oss.str());
+    case CastError::IsNan: oss << "isnan"; throw std::range_error(oss.str());
+    default: [[unlikely]] std::abort();
     }
 }
 
