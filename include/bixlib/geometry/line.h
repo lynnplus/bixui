@@ -77,8 +77,9 @@ public:
      */
     template <typename From>
     requires Upcastable<T, From>
-    constexpr explicit LineT(const LineT<From>& other) noexcept : start(PointT<T>(other.start))
-                                                                , end(PointT<T>(other.end)) {}
+    constexpr explicit LineT(const LineT<From>& other) noexcept
+        : start(PointT<T>(other.start))
+        , end(PointT<T>(other.end)) {}
 
     /**
      * Assigns from another compatible numeric type.
