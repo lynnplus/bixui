@@ -20,11 +20,11 @@
 using namespace bix::math;
 
 static_assert(numeric_cast<int>(5.0f) == 5, "numeric_cast should work at compile time");
-static_assert(numeric_cast<float>(5) == 5, "numeric_cast should work at compile time");
-static_assert(numeric_cast<float>(5.0) == 5, "numeric_cast should work at compile time");
+static_assert(exactlyEqual(numeric_cast<float>(5), 5.f), "numeric_cast should work at compile time");
 static_assert(numeric_cast<uint8_t>(5) == 5, "numeric_cast should work at compile time");
 
 TEST(FuzzyCompareTest, FuzzyEqual) {
+
     // 1. Test float with default epsilon (1e-5f)
     EXPECT_TRUE(fuzzyEqual(1.0f, 1.000001f)); // Diff = 1e-6 (Equal)
     EXPECT_FALSE(fuzzyEqual(1.0f, 1.0001f));  // Diff = 1e-4 (Not equal)

@@ -18,6 +18,8 @@ add_library(bix_window OBJECT
 bix_module_setup(bix_window)
 bix_module_add_headers(bix_window ${_window_headers})
 
+target_link_libraries(bix_window PRIVATE bix::geometry)
+
 
 if (WIN32)
     target_sources(bix_window PRIVATE

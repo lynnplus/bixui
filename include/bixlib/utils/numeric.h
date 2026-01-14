@@ -13,6 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+/**
+ * @file numeric.h
+ * @brief Mathematical concepts and utility functions for numeric conversions.
+ */
+
 #pragma once
 
 #include <bixlib/utils/concepts.h>
@@ -20,7 +26,6 @@
 #include <sstream>
 
 /**
- * @namespace bix::math
  * Fundamental mathematical utilities for the bixlib.
  *
  * This namespace contains essential tools for handling floating-point precision,
@@ -28,6 +33,40 @@
  * geometry, rendering, and layout modules.
  */
 namespace bix::math {
+
+/**
+ * Performs a strict equality check between two numeric values.
+ *
+ * This function is a low-level utility designed to execute a zero-tolerance
+ * comparison. For floating-point types, it performs a direct equality check
+ * without applying any epsilon-based threshold. It is specifically implemented
+ * to bypass compiler diagnostics like -Wfloat-equal in strict build environments.
+ * @tparam T The numeric type of the values being compared.
+ * @param a The first value to compare.
+ * @param b The second value to compare.
+ * @return True if the values are identical, false otherwise.
+ * @note For floating-point types, this function should be used with caution due
+ * to potential precision issues and rounding errors. In most geometric or
+ * physical calculations, fuzzyEqual() is preferred.
+ * @warning This function treats 0.0 and -0.0 as equal, following the IEEE 754
+ * standard, but it will return false for two NaN values as per the C++ standard.
+ */
+template <typename T>
+constexpr bool exactlyEqual(T a, T b) noexcept {
+#if defined(__clang__)
+    #pragma clang diagnostic push
+    #pragma clang diagnostic ignored "-Wfloat-equal"
+    return a == b;
+    #pragma clang diagnostic pop
+#elif defined(__GNUC__) && (__GNUC__ >= 4)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wfloat-equal"
+    return a == b;
+    #pragma GCC diagnostic pop
+#else
+    return a == b;
+#endif
+}
 
 namespace internal {
 
@@ -72,20 +111,8 @@ using standard_int_t = std::conditional_t<
     std::conditional_t<std::is_same_v<T, bool>, int, T>>;
 
 template <typename T>
-constexpr bool physical_equal(T a, T b) noexcept {
-#if defined(__GNUC__) || defined(__clang__)
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wfloat-equal"
-#endif
-    return a == b;
-#if defined(__GNUC__) || defined(__clang__)
-    #pragma GCC diagnostic pop
-#endif
-}
-
-template <typename T>
 constexpr bool is_nan_safe(T v) noexcept {
-    return !physical_equal(v, v);
+    return !exactlyEqual(v, v);
 }
 } // namespace internal
 
@@ -177,7 +204,8 @@ constexpr To numeric_cast(From value) noexcept(internal::kDisableCheck) {
 
     To result = static_cast<To>(value);
     if constexpr (ToLimit::is_integer && FromLimit::is_integer) { return result; }
-    if (static_cast<From>(result) != value) { dispatch_cast_error<To>(value, CastError::Inexact); }
+
+    if (!exactlyEqual(static_cast<From>(result), value)) { dispatch_cast_error<To>(value, CastError::Inexact); }
     return result;
 #endif
 }
@@ -289,7 +317,7 @@ inline constexpr long double default_eps_v<long double> = 1e-12L;
  */
 template <FloatType T>
 constexpr bool fuzzyEqual(T a, T b, T epsilon = default_eps_v<T>) noexcept {
-    if (internal::physical_equal(a, b)) [[unlikely]]
+    if (exactlyEqual(a, b)) [[unlikely]]
         return true;
     const T delta = a - b;
     return (delta < 0 ? -delta : delta) <= epsilon;
@@ -312,7 +340,7 @@ constexpr bool fuzzyEqual(T a, T b, T epsilon = default_eps_v<T>) noexcept {
  */
 template <FloatType T>
 constexpr bool fuzzyIsZero(T val, T epsilon = default_eps_v<T>) noexcept {
-    if (internal::physical_equal(val, static_cast<T>(0))) [[unlikely]]
+    if (exactlyEqual(val, static_cast<T>(0))) [[unlikely]]
         return true;
     return (val < 0 ? -val : val) <= epsilon;
 }

@@ -46,6 +46,22 @@ concept FloatType = std::is_floating_point_v<T>;
 template <class T>
 concept EnumType = std::is_enum_v<T>;
 
+template <typename To, typename From>
+struct IsUpcastable : std::false_type {};
+
+template <typename To, typename From>
+requires std::is_floating_point_v<To> && std::is_integral_v<From>
+struct IsUpcastable<To, From> : std::true_type {};
+
+template <typename To, typename From>
+requires((std::integral<To> && std::integral<From>) || (std::floating_point<To> && std::floating_point<From>))
+        && (std::is_signed_v<To> == std::is_signed_v<From>)
+        && (std::numeric_limits<To>::digits > std::numeric_limits<From>::digits)
+struct IsUpcastable<To, From> : std::true_type {};
+
+template <typename To, typename From>
+concept Upcastable = IsUpcastable<To, From>::value;
+
 namespace traits {
 template <typename T>
 struct IsUniquePtr : std::false_type {};

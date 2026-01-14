@@ -92,7 +92,8 @@ public:
      *
      * @param flag The enum value to initialize the flags with
      */
-    constexpr explicit Flags(Enum flag) noexcept { mValue = ValueType(flag); }
+    // ReSharper disable once CppNonExplicitConvertingConstructor
+    constexpr Flags(Enum flag) noexcept { mValue = ValueType(flag); } // NOLINT(*-explicit-constructor)
 
     /**
      * Initializes the flags container with the specified enum values.
@@ -106,6 +107,10 @@ public:
             mValue = mValue | ValueType(flag);
         }
     }
+
+    template <typename T>
+    requires std::is_integral_v<T> && (!std::is_same_v<T, Enum>)
+    explicit Flags(T) = delete;
 
     /**
      * Gets the underlying integer value representing all flags
@@ -249,10 +254,12 @@ public:
      */
     template <size_t Size = MAX_SIZE>
     constexpr Flags& toggleAll() noexcept {
+        static_assert(Size <= MAX_SIZE, "Size exceeds bit capacity of underlying type");
         if constexpr (Size == MAX_SIZE) {
-            mValue = ~mValue;
+            mValue ^= static_cast<ValueType>(~ZERO);
         } else {
-            mValue ^= (ValueType(1) << Size) - 1;
+            constexpr ValueType mask = (ValueType(1) << Size) - 1;
+            mValue ^= mask;
         }
         return *this;
     }
@@ -326,7 +333,9 @@ private:
  * @param Enum The name of the enumeration type to register.
  */
 #define BIX_DECLARE_ENUM_FLAGS(Enum)                                                                              \
-    /* NOLINTNEXTLINE(bugprone-macro-parentheses) */                                                              \
-    inline constexpr bix::Flags<Enum> operator|(Enum lhs, Enum rhs) { return bix::Flags(lhs) | bix::Flags(rhs); }
+    /* NOLINTNEXTLINE(bugprone-macro-parentheses) */                  \
+    inline constexpr bix::Flags<Enum> operator|(Enum lhs, Enum rhs) { \
+        return bix::Flags<Enum>(lhs) | bix::Flags<Enum>(rhs);         \
+    }
 
 } // namespace bix

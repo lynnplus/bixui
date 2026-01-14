@@ -72,8 +72,8 @@ public:
     /**
      * @name Factory Methods
      * These methods provide a fluent API for creating Length objects.
+     * @{
      */
-    ///@{
     constexpr static Length dp(float v) noexcept { return {v, DP}; }
 
     constexpr static Length px(int v) noexcept { return {v, PX}; }

@@ -34,7 +34,10 @@ macro(bix_test_setup TARGET_NAME)
 endmacro()
 
 
-add_executable(bix_utils_test utils/numeric_test.cpp)
+add_executable(bix_utils_test
+        utils/numeric_test.cpp
+        utils/flags_test.cpp)
+
 bix_test_setup(bix_utils_test)
 
 
