@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Lynn <lynnplus90@gmail.com>.
+ * Copyright (c) 2025-2026 Lynn <lynnplus90@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,11 +15,15 @@
  */
 
 #pragma once
-#include "layout.h"
+#include "../widgets/container.h"
 
 namespace bix {
-class BIX_PUBLIC LinearLayout : public Layout {
+class BIX_PUBLIC LinearLayout : public Container {
 public:
+    enum class Orientation {
+        Horizontal,
+        Vertical
+    };
     void setOrientation(bool horizontal);
 
 protected:
@@ -31,5 +35,15 @@ protected:
 private:
     // orientation="horizontal
     bool mIsHorizontal = false; // default vertical
+};
+
+class BIX_PUBLIC HBox : public LinearLayout {
+public:
+    Row() : LinearLayout(Orientation::Horizontal) {}
+};
+
+class BIX_PUBLIC VBox : public LinearLayout {
+public:
+    Column() : LinearLayout(Orientation::Vertical) {}
 };
 } // namespace bix

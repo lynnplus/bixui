@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Lynn <lynnplus90@gmail.com>.
+ * Copyright (c) 2025-2026 Lynn <lynnplus90@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  */
 
 #pragma once
-#include "bixlib/controls/control.h"
+#include "widget.h"
 
 namespace bix {
-class BIX_PUBLIC Label : public Control {
+class BIX_PUBLIC Label : public Widget {
 public:
     const std::string& className() const noexcept override;
 
@@ -32,7 +32,7 @@ protected:
     void onLayout(const UIRect& rect) override;
 
 public:
-    void onDraw(Canvas& canvas) override;
+    void onPaint(Canvas& canvas) override;
     void discardCanvas() override;
 
 protected:

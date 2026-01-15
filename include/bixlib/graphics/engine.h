@@ -16,29 +16,28 @@
 
 #pragma once
 
-#include "bixlib/core/window.h"
+#include "../window/window.h"
+#include "bixlib/graphics/canvas.h"
 
 namespace bix {
-
-class NativeWindow {
+class BIX_PUBLIC RenderEngine {
 public:
-    virtual ~NativeWindow() = default;
+    virtual ~RenderEngine() = default;
 
-    static std::unique_ptr<NativeWindow> create(Window* w);
+    enum Type {
+        Direct2D,
+        GdiPlus,
+        X11,
 
-    virtual intptr_t nativeHandle() = 0;
+        UserCustom = 100
+    };
 
-    virtual void setTitle(const std::string& title) = 0;
-    virtual void setVisible(bool visible) = 0;
+    static RenderEngine* from(Type t);
 
-    virtual void invalidateRect(const UIRect& rect) = 0;
-    virtual void validateRect(const UIRect& rect) = 0;
+    virtual void shutdown() noexcept = 0;
 
-    virtual void resize(const UISize& size) = 0;
-    virtual void clientRect(UIRect& rect) const = 0;
-    [[nodiscard]] virtual DisplayPtr display() const = 0;
+    virtual Type type() const noexcept = 0;
+
+    virtual CanvasPtr createCanvas(const Window& w) = 0;
 };
-
-using NativeWindowPtr = std::unique_ptr<NativeWindow>;
-
 } // namespace bix

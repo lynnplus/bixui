@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Lynn <lynnplus90@gmail.com>.
+ * Copyright (c) 2025-2026 Lynn <lynnplus90@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,22 +14,29 @@
  * limitations under the License.
  */
 
-#pragma once
-#include "bixlib/controls/control.h"
-#include "label.h"
+#include "window/native_window.h"
+
+#include <bixlib/export_macro.h>
 
 namespace bix {
-class BIX_PUBLIC Button : public Label {
+
+namespace {
+
+class NativeWindowDummy : public NativeWindow {
 public:
-    Button();
+    void createNative() override {}
 
-    const std::string& className() const noexcept override;
-    void discardCanvas() override;
+    void destroyNative() override {}
 
-protected:
-    void onDraw(Canvas& canvas) override;
+    ScreenPtr getScreen() const override { return nullptr; }
 
-private:
-    // ColorBrushPtr mBrush=nullptr;
+    bool queryNativeInfo(NativeWindowInfo& info) const override { BIX_UNUSED(info) return false; }
+
+    void setTitle(std::string_view) override {}
 };
+} // namespace
+
+std::unique_ptr<NativeWindow> NativeWindow::createDummy() {
+    return std::make_unique<NativeWindowDummy>();
+}
 } // namespace bix

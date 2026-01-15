@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Lynn <lynnplus90@gmail.com>.
+ * Copyright (c) 2025-2026 Lynn <lynnplus90@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,3 +29,13 @@
  * Developers should use these macros to integrate their custom types into the
  * framework's ecosystem efficiently.
  */
+
+#define BIX_DISABLE_COPY_AND_MOVE(ClassName)         \
+    ClassName(const ClassName&) = delete;            \
+    ClassName& operator=(const ClassName&) = delete; \
+    ClassName(ClassName&&) = delete;                 \
+    ClassName& operator=(ClassName&&) = delete;
+
+#define BIX_INTERFACE(ClassName)         \
+    virtual ~ClassName();                \
+    BIX_DISABLE_COPY_AND_MOVE(ClassName)

@@ -17,10 +17,10 @@
 #pragma once
 
 #include "bixlib/geometry.h"
-#include "bixlib/render/brush.h"
-#include "bixlib/render/pen.h"
-#include "bixlib/render/text_format.h"
-#include "bixlib/render/transform.h"
+#include "bixlib/graphics/brush.h"
+#include "bixlib/graphics/pen.h"
+#include "bixlib/graphics/text_format.h"
+#include "bixlib/graphics/transform.h"
 
 namespace bix {
 
@@ -69,7 +69,7 @@ public:
      * Retrieves the current size of the canvas.
      * @return The size of the canvas as a SizeF object.
      */
-    virtual SizeF size() const noexcept = 0;
+    virtual Size size() const noexcept = 0;
     /**
      * Begins the drawing process on the canvas.
      * This method should be called before any drawing operations.
@@ -84,7 +84,7 @@ public:
      * Resizes the canvas to the specified dimensions.
      * @param[in] size The new size for the canvas.
      */
-    virtual void resize(const UISize& size) = 0;
+    virtual void resize(const Size& size) = 0;
     /**
      * Clears the canvas with the specified color.
      * @param[in] c The color used to clear the canvas.

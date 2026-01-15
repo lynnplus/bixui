@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "bixlib/render/color.h"
+#include "bixlib/graphics/color.h"
 
 #include <memory>
 

@@ -44,7 +44,8 @@ bool ClassManager::prepare(const wchar_t* clsName, WNDPROC wndProc) {
     }
 
     HINSTANCE hInst = GetModuleHandle(nullptr);
-    WNDCLASSEXW wcex = {sizeof(WNDCLASSEXW)};
+    WNDCLASSEXW wcex{};
+    wcex.cbSize = sizeof(wcex);
 
     wcex.style = CS_HREDRAW | CS_VREDRAW;
     wcex.lpfnWndProc = wndProc;
@@ -73,9 +74,7 @@ bool ClassManager::prepare(const wchar_t* clsName, WNDPROC wndProc) {
 
 const char* ClassManager::getClassName(const wchar_t* clsName) {
     std::lock_guard lock(s_mtx);
-    if (auto it = s_nameCache.find(clsName); it != s_nameCache.end()) {
-        return it->second.c_str();
-    }
+    if (auto it = s_nameCache.find(clsName); it != s_nameCache.end()) { return it->second.c_str(); }
     return nullptr;
 }
 

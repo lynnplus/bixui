@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2025 Lynn <lynnplus90@gmail.com>.
+ * Copyright (c) 2025-2026 Lynn <lynnplus90@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +16,6 @@
 
 #pragma once
 
-#include <bixlib/geometry/rect.h>
-#include <bixlib/utils/fmt_wrapper.h>
-
 namespace bix {
-inline auto format_as(const UIRect& r) {
-    return fmt::format("Rect(x:{} y:{} w:{} h:{})", r.left(), r.top(), r.width(), r.height());
-}
-
-inline auto format_as(const UISize& r) {
-    return fmt::format("Size(w:{} h:{})", r.width, r.height);
-}
+class Switch {};
 } // namespace bix

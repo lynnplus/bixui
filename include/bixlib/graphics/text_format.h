@@ -15,10 +15,11 @@
  */
 
 #pragma once
-#include "bixlib/geometry/rectangle.h"
-#include "color.h"
+#include "bixlib/geometry/rect.h"
 
 #include <string>
+
+#include "color.h"
 
 namespace bix {
 enum class TextDirection {
@@ -61,7 +62,7 @@ public:
     virtual ~TextPaint() = default;
     virtual void setText(const std::string& text) = 0;
     virtual void setFontFamily(const std::string& name) = 0;
-    virtual void setMaxSize(const UISize& maxSize) = 0;
+    // virtual void setMaxSize(const UISize& maxSize) = 0;
     virtual void setMaxWidth(int w) = 0;
     virtual void setMaxHeight(int h) = 0;
     virtual void setTextSize(float size) = 0;
