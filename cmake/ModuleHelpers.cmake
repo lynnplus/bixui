@@ -43,14 +43,8 @@ function(bix_module_add_headers TARGET_NAME)
             list(APPEND header_files "${BIX_HEADER_ROOT}/${_hpath}")
         endif ()
     endforeach ()
-    get_target_property(TARGET_TYPE ${TARGET_NAME} TYPE)
-    if (TARGET_TYPE STREQUAL "INTERFACE_LIBRARY")
-        set(SCOPE INTERFACE)
-    else ()
-        set(SCOPE PUBLIC)
-    endif ()
 
-    target_sources(${TARGET_NAME} ${SCOPE}
+    target_sources(${TARGET_NAME} PUBLIC
             FILE_SET HEADERS
             BASE_DIRS "${BIX_INCLUDE_BASE}"
             FILES ${header_files}
