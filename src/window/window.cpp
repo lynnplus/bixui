@@ -22,11 +22,12 @@
 
 namespace bix {
 
-Window::Window() : mPrivate(std::make_unique<WindowPrivate>(this)) {
-}
+Window::Window() : mPrivate(std::make_unique<WindowPrivate>(this)) {}
 
 // NOLINT(*-use-equals-default)
-Window::~Window() { fmt::println("Window::~Window()"); }
+Window::~Window() {
+    fmt::println("Window::~Window()");
+}
 
 void Window::show() {
     // mPrivate->createWindow();
@@ -47,15 +48,21 @@ void Window::show() {
     // mPrivate->test();
 }
 
-bool Window::queryNativeInfo(NativeWindowInfo& info) const { return mPrivate->queryNativeInfo(info); }
+bool Window::queryNativeInfo(NativeWindowInfo& info) const {
+    return mPrivate->queryNativeInfo(info);
+}
 
 // void Window::resize(const UILength& w, const UILength& h) { mPrivate->setWindowSize(w, h); }
 
 // void Window::resize(int w, int h) { resize(UILength(w), UILength(h)); }
 
-void Window::close() { mPrivate->requestClose(CloseRequest::Reason::Programmatic); }
+void Window::close() {
+    mPrivate->requestClose(CloseRequest::Reason::Programmatic);
+}
 
-void Window::destroy() { mPrivate->performDestroy(); }
+void Window::destroy() {
+    mPrivate->performDestroy();
+}
 
 // void Window::setClientSize(const UILength& w, const UILength& h) { mPrivate->setWindowClientSize(w, h); }
 
@@ -63,19 +70,25 @@ void Window::destroy() { mPrivate->performDestroy(); }
 
 void Window::moveToCenter() {}
 
-void Window::setTitle(std::string_view title) { mPrivate->setWindowTitle(title); }
+void Window::setTitle(std::string_view title) {
+    mPrivate->setWindowTitle(title);
+}
 
 // void Window::invalidateRect(const UIRect& rect) { mPrivate->invalidateRect(rect); }
 
 // WindowPrivate* Window::getImpl() const { return mPrivate.get(); }
 
-std::string Window::title() const { return mPrivate->title(); }
+std::string Window::title() const {
+    return mPrivate->title();
+}
 
 // std::string Window::uniqueId() const { return mPrivate->uniqueId(); }
 
 // void Window::setUniqueId(const std::string& id) { return mPrivate->setUniqueId(id); }
 
-ScreenPtr Window::screen() const { return mPrivate->screen(); }
+ScreenPtr Window::screen() const {
+    return mPrivate->screen();
+}
 
 // void Window::setLayout(std::unique_ptr<Layout> root) { mPrivate->setRootLayout(std::move(root)); }
 } // namespace bix

@@ -15,7 +15,8 @@
  */
 
 #pragma once
-#include "bixlib/render/pen.h"
+#include "bixlib/graphics/pen.h"
+
 #include "brush.h"
 
 namespace bix {

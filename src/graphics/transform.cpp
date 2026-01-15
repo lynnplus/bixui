@@ -14,16 +14,17 @@
  * limitations under the License.
  */
 
-#include "bixlib/render/transform.h"
-
-#include <valarray>
+#include "bixlib/graphics/transform.h"
 
 #include "bixlib/export_macro.h"
 
+#include <valarray>
+
 namespace bix {
 
-
-bool fuzzyIsZero(float v) { return std::abs(v) <= 0.00001f; }
+bool fuzzyIsZero(float v) {
+    return std::abs(v) <= 0.00001f;
+}
 
 Transform Transform::fromTranslate(float dx, float dy) {
     Transform tm(1, 0, 0, 0, 1, 0, dx, dy, 1);
@@ -48,9 +49,7 @@ Transform Transform::fromScale(float sx, float sy) {
 }
 
 Transform::TransformationType Transform::type() const {
-    if (mDirty == None || mDirty < mType) {
-        return mType;
-    }
+    if (mDirty == None || mDirty < mType) { return mType; }
 
     switch (mDirty) {
     case Project:
@@ -82,9 +81,7 @@ Transform::TransformationType Transform::type() const {
             break;
         }
         [[fallthrough]];
-    case None:
-        mType = None;
-        break;
+    case None: mType = None; break;
     }
 
     mDirty = None;
@@ -92,9 +89,7 @@ Transform::TransformationType Transform::type() const {
 }
 
 Transform& Transform::translate(float dx, float dy) {
-    if (dx == 0.0f && dy == 0.0f) {
-        return *this;
-    }
+    if (dx == 0.0f && dy == 0.0f) { return *this; }
 
     switch (type()) {
     case None:
@@ -109,24 +104,19 @@ Transform& Transform::translate(float dx, float dy) {
         mMatrix[2][0] += dx * mMatrix[0][0];
         mMatrix[2][1] += dy * mMatrix[1][1];
         break;
-    case Project:
-        mMatrix[2][2] += dx * mMatrix[0][2] + dy * mMatrix[1][2];
-        [[fallthrough]];
+    case Project: mMatrix[2][2] += dx * mMatrix[0][2] + dy * mMatrix[1][2]; [[fallthrough]];
     case Shear:
     case Rotate:
         mMatrix[2][0] += dx * mMatrix[0][0] + dy * mMatrix[1][0];
         mMatrix[2][1] += dy * mMatrix[1][1] + dx * mMatrix[0][1];
         break;
     }
-    if (mDirty < Translate)
-        mDirty = Translate;
+    if (mDirty < Translate) mDirty = Translate;
     return *this;
 }
 
 Transform& Transform::scale(float sx, float sy) {
-    if (sx == 1.f && sy == 1.f) {
-        return *this;
-    }
+    if (sx == 1.f && sy == 1.f) { return *this; }
     switch (type()) {
     case None:
     case Translate:
@@ -147,19 +137,22 @@ Transform& Transform::scale(float sx, float sy) {
         mMatrix[1][1] *= sy;
         break;
     }
-    if (mDirty < Scale)
-        mDirty = Scale;
+    if (mDirty < Scale) mDirty = Scale;
     return *this;
 }
 
 Transform& Transform::shear(float sh, float sv) {
-    //TODO not implemented
+    // TODO not implemented
     BIX_UNUSED(sh)
     BIX_UNUSED(sv)
     return *this;
 }
 
-void Transform::reset() { *this = Transform(); }
+void Transform::reset() {
+    *this = Transform();
+}
 
-const float* Transform::data() const { return &mMatrix[0][0]; }
+const float* Transform::data() const {
+    return &mMatrix[0][0];
+}
 } // namespace bix

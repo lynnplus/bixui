@@ -15,10 +15,11 @@
  */
 
 #pragma once
-#include "bixlib/render/text_format.h"
-#include "direct2d.h"
+#include "bixlib/graphics/text_format.h"
 
 #include <dwrite.h>
+
+#include "direct2d.h"
 
 namespace bix {
 

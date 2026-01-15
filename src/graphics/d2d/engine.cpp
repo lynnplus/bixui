@@ -16,23 +16,27 @@
 
 #include "engine.h"
 
+#include <fmt/base.h>
+
 #include "convert-inl.h"
 #include "d2d_canvas.h"
-
-#include <fmt/base.h>
 
 namespace bix {
 
 using namespace std;
 
-Direct2DEngine::~Direct2DEngine() { fmt::println("Direct2DEngine::~Direct2DEngine"); }
+Direct2DEngine::~Direct2DEngine() {
+    fmt::println("Direct2DEngine::~Direct2DEngine");
+}
 
 void Direct2DEngine::shutdown() noexcept {
     mDWriteFactory = nullptr;
     mD2DFactory = nullptr;
 }
 
-RenderEngine::Type Direct2DEngine::type() const noexcept { return Type::Direct2D; }
+RenderEngine::Type Direct2DEngine::type() const noexcept {
+    return Type::Direct2D;
+}
 
 CanvasPtr Direct2DEngine::createCanvas(const Window& w) {
 
@@ -47,7 +51,7 @@ CanvasPtr Direct2DEngine::createCanvas(const Window& w) {
     auto rtProps = D2D1::HwndRenderTargetProperties(wnd, size);
     auto props = D2D1::RenderTargetProperties();
     props.dpiX = 96;
-    props.dpiY = 96;//1dp=1px
+    props.dpiY = 96; // 1dp=1px
     ID2D1HwndRenderTarget* target = nullptr;
     // Create a Direct2D render target. use pixel size from window client
     auto hr = mD2DFactory->CreateHwndRenderTarget(props, rtProps, &target);
@@ -55,7 +59,7 @@ CanvasPtr Direct2DEngine::createCanvas(const Window& w) {
         fmt::println("Failed to create render target");
         return nullptr;
     }
-    return make_unique<D2DWindowTarget>(DHwndRenderTargetPtr(target),this);
+    return make_unique<D2DWindowTarget>(DHwndRenderTargetPtr(target), this);
 }
 
 IDWriteTextFormat* Direct2DEngine::createFont() {
@@ -74,7 +78,13 @@ IDWriteTextFormat* Direct2DEngine::createFont() {
     auto hr = mDWriteFactory->CreateTextFormat(
         L"Gabriola", // Font family name.
         nullptr,     // Font collection (NULL sets it to use the system font collection).
-        DWRITE_FONT_WEIGHT_REGULAR, DWRITE_FONT_STYLE_NORMAL, DWRITE_FONT_STRETCH_NORMAL, 12.0f, L"en-us", &format);
+        DWRITE_FONT_WEIGHT_REGULAR,
+        DWRITE_FONT_STYLE_NORMAL,
+        DWRITE_FONT_STRETCH_NORMAL,
+        12.0f,
+        L"en-us",
+        &format
+    );
     hr = format->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_CENTER);
     hr = format->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_CENTER);
     format->SetFlowDirection(DWRITE_FLOW_DIRECTION_TOP_TO_BOTTOM);
@@ -86,8 +96,7 @@ IDWriteTextFormat* Direct2DEngine::createFont() {
 
     // mDWriteFactory->CreateFontFace()
 
-    if (hr) {
-    }
+    if (hr) {}
 
     return format;
 }
@@ -108,15 +117,14 @@ Direct2DEngine::Direct2DEngine() {
     HRESULT hr = D2D1CreateFactory(D2D1_FACTORY_TYPE_SINGLE_THREADED, &factory);
 #endif
 
-    if (hr == S_OK) {
-        mD2DFactory = DFactorPtr(factory);
-    }
+    if (hr == S_OK) { mD2DFactory = DFactorPtr(factory); }
 
     IDWriteFactory* wfactory = nullptr;
-    hr = DWriteCreateFactory(DWRITE_FACTORY_TYPE_SHARED, __uuidof(IDWriteFactory),
-                             reinterpret_cast<IUnknown**>(&wfactory));
-    if (hr == S_OK) {
-        mDWriteFactory = DWriteFactoryPtr(wfactory);
-    }
+    hr = DWriteCreateFactory(
+        DWRITE_FACTORY_TYPE_SHARED,
+        __uuidof(IDWriteFactory),
+        reinterpret_cast<IUnknown**>(&wfactory)
+    );
+    if (hr == S_OK) { mDWriteFactory = DWriteFactoryPtr(wfactory); }
 }
 } // namespace bix

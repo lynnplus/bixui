@@ -16,14 +16,12 @@
 
 #include "render/d2d/engine.h"
 
-#include <bixlib/render/engine.h>
+#include <bixlib/graphics/engine.h>
 
 namespace bix {
 
 RenderEngine* RenderEngine::from(Type t) {
-    if (t == Direct2D) {
-        return Direct2DEngine::instance();
-    }
+    if (t == Direct2D) { return Direct2DEngine::instance(); }
     return nullptr;
 }
 } // namespace bix

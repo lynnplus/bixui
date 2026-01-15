@@ -16,7 +16,8 @@
 
 #pragma once
 
-#include "bixlib/render/brush.h"
+#include "bixlib/graphics/brush.h"
+
 #include "direct2d.h"
 
 namespace bix {
@@ -31,9 +32,7 @@ public:
     float opacity() const noexcept override { return mBrush->GetOpacity(); }
 
     bool testCast(uintptr_t scope, long castId) const noexcept override {
-        if (scope != mScopeId || D2DBasicBrush_CAST_ID != castId) {
-            return false;
-        }
+        if (scope != mScopeId || D2DBasicBrush_CAST_ID != castId) { return false; }
         return true;
     }
 
@@ -41,7 +40,9 @@ public:
 
 protected:
     D2DBasicBrush(ID2D1RenderTarget* renderTarget, ID2D1Brush* brush, uintptr_t scopeId)
-        : mRenderTarget(renderTarget), mBrush(brush), mScopeId(scopeId) {}
+        : mRenderTarget(renderTarget)
+        , mBrush(brush)
+        , mScopeId(scopeId) {}
 
 private:
     ID2D1RenderTarget* mRenderTarget = nullptr;
@@ -52,7 +53,8 @@ private:
 class D2DSolidColorBrush : public D2DBasicBrush<ColorBrush> {
 public:
     D2DSolidColorBrush(DSolidColorBrushPtr brush, ID2D1RenderTarget* renderTarget, uintptr_t scopeId)
-        : D2DBasicBrush(renderTarget, brush.get(), scopeId), mBrushImpl(std::move(brush)) {}
+        : D2DBasicBrush(renderTarget, brush.get(), scopeId)
+        , mBrushImpl(std::move(brush)) {}
 
     void setColor(const Color& color) override;
     Color color() const noexcept override;

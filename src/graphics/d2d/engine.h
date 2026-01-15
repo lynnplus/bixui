@@ -16,7 +16,8 @@
 
 #pragma once
 
-#include "bixlib/render/engine.h"
+#include "bixlib/graphics/engine.h"
+
 #include "direct2d.h"
 
 namespace bix {

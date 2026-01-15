@@ -19,7 +19,6 @@
 
 namespace bix {
 
-
 enum class ClipType {
     AlignedClip,
     Layer
@@ -33,7 +32,7 @@ public:
 // https://learn.microsoft.com/zh-cn/windows/win32/learnwin32/dpi-and-device-independent-pixels?redirectedfrom=MSDN
 class D2DWindowTarget : public Canvas {
 public:
-    D2DWindowTarget(DHwndRenderTargetPtr renderTarget,Direct2DEngine* engine);
+    D2DWindowTarget(DHwndRenderTargetPtr renderTarget, Direct2DEngine* engine);
 
     [[nodiscard]] ColorBrushPtr createColorBrush(const Color& color) override;
     [[nodiscard]] PenPtr createPen(const Color& color) override;

@@ -14,32 +14,49 @@
  * limitations under the License.
  */
 
-#include "display.h"
+#include "../../window/backends/win32/win32_encoding.h"
 
-#include "string_ext.h"
+#include "screen.h"
 #include "win32_api.h"
 
 // https://colinfinck.de/posts/writing-win32-apps-like-its-2020-part-3/
 
 namespace bix {
 
-const std::string& WinDisplay::deviceName() const noexcept { return mDeviceName; }
+const std::string& WinDisplay::deviceName() const noexcept {
+    return mDeviceName;
+}
 
-bool WinDisplay::isValid() const noexcept { return mIsValid; }
+bool WinDisplay::isValid() const noexcept {
+    return mIsValid;
+}
 
-const UISize& WinDisplay::resolution() const noexcept { return mResolution; }
+const UISize& WinDisplay::resolution() const noexcept {
+    return mResolution;
+}
 
-const UISize& WinDisplay::size() const noexcept { return mSize; }
+const UISize& WinDisplay::size() const noexcept {
+    return mSize;
+}
 
-int WinDisplay::refreshRate() const noexcept { return mRefreshRate; }
+int WinDisplay::refreshRate() const noexcept {
+    return mRefreshRate;
+}
 
-int WinDisplay::baseDPI() const noexcept { return mBaseDpi; }
+int WinDisplay::baseDPI() const noexcept {
+    return mBaseDpi;
+}
 
-int WinDisplay::dpi() const noexcept { return mDpi; }
+int WinDisplay::dpi() const noexcept {
+    return mDpi;
+}
 
-bool WinDisplay::isDefault() const noexcept { return false; }
+bool WinDisplay::isDefault() const noexcept {
+    return mHwnd == nullptr;
+}
 
 bool WinDisplay::update(HWND hwnd) {
+    mHwnd = hwnd;
     mIsValid = false;
     // The MonitorFromWindow function retrieves a handle to the display monitor
     // that has the largest area of intersection with the bounding rectangle of a specified window.
@@ -71,6 +88,10 @@ bool WinDisplay::update(HWND hwnd) {
     return true;
 }
 
-void WinDisplay::invalidate() { mIsValid = false; }
+void WinDisplay::invalidate() {
+    mIsValid = false;
+    mHwnd = nullptr;
+    mMonitor = nullptr;
+}
 
 } // namespace bix

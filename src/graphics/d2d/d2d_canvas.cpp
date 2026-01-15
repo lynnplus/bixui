@@ -17,6 +17,7 @@
 #include "d2d_canvas.h"
 
 #include "bixlib/utils/fmt_bix.h"
+
 #include "convert-inl.h"
 #include "pen.h"
 #include "text_format.h"
@@ -26,32 +27,31 @@ namespace bix {
 using namespace std;
 
 inline void throwIfD2DFailed(HRESULT hr, const string& msg) {
-    if (hr != S_OK) {
-        throw runtime_error(fmt::format("D2D:{}, HRESULT:{}", msg, hr));
-    }
+    if (hr != S_OK) { throw runtime_error(fmt::format("D2D:{}, HRESULT:{}", msg, hr)); }
 }
 
-D2DWindowTarget::D2DWindowTarget(DHwndRenderTargetPtr renderTarget,Direct2DEngine* engine)
-    : mTarget(std::move(renderTarget)), mSafeScopeId(reinterpret_cast<uintptr_t>(mTarget.get())) {
+D2DWindowTarget::D2DWindowTarget(DHwndRenderTargetPtr renderTarget, Direct2DEngine* engine)
+    : mTarget(std::move(renderTarget))
+    , mSafeScopeId(reinterpret_cast<uintptr_t>(mTarget.get())) {
 
-    mWriteFactory=engine->writeFactory();
+    mWriteFactory = engine->writeFactory();
 }
 
-void D2DWindowTarget::beginDraw() { mTarget->BeginDraw(); }
+void D2DWindowTarget::beginDraw() {
+    mTarget->BeginDraw();
+}
 
 DrawResult D2DWindowTarget::endDraw() {
     HRESULT hr = mTarget->EndDraw();
-    if (hr == S_OK) {
-        return DrawResult::Success;
-    }
-    if (hr == D2DERR_RECREATE_TARGET) {
-        return DrawResult::RecreateCanvas;
-    }
+    if (hr == S_OK) { return DrawResult::Success; }
+    if (hr == D2DERR_RECREATE_TARGET) { return DrawResult::RecreateCanvas; }
     fmt::println("Direct2DWindowTarget EndDraw fail: {}", hr);
     return DrawResult::Error;
 }
 
-void D2DWindowTarget::setTransform(const Transform& transform) { mTarget->SetTransform(convert_to_DMatrix(transform)); }
+void D2DWindowTarget::setTransform(const Transform& transform) {
+    mTarget->SetTransform(convert_to_DMatrix(transform));
+}
 
 void D2DWindowTarget::resize(const UISize& size) {
     // Changes the size of the render target to the specified pixel size.
@@ -59,7 +59,9 @@ void D2DWindowTarget::resize(const UISize& size) {
     throwIfD2DFailed(hr, "resize error");
 }
 
-void D2DWindowTarget::clear(const Color& c) { mTarget->Clear(convert_to_DColorF(c)); }
+void D2DWindowTarget::clear(const Color& c) {
+    mTarget->Clear(convert_to_DColorF(c));
+}
 
 bool D2DWindowTarget::pushClip(const UIFlexRoundedRect& rect) {
     assert(rect.isValid());
@@ -80,30 +82,36 @@ bool D2DWindowTarget::pushClip(const UIFlexRoundedRect& rect) {
 
     if (shape == ShapeType::RoundedRectangle || shape == ShapeType::Ellipse) {
 
-        D2D1_ROUNDED_RECT tmp(convert_to_DRectF(rect), static_cast<float>(rect.tl.radiusX),
-                              static_cast<float>(rect.tl.radiusY));
+        D2D1_ROUNDED_RECT tmp(
+            convert_to_DRectF(rect),
+            static_cast<float>(rect.tl.radiusX),
+            static_cast<float>(rect.tl.radiusY)
+        );
         ID2D1RoundedRectangleGeometry* geometry = nullptr;
         auto hr = factoryPtr->CreateRoundedRectangleGeometry(tmp, &geometry);
         throwIfD2DFailed(hr, "create geometry error");
         geometricMask = geometry;
     }
 
-    if (geometricMask == nullptr) {
-        return false;
-    }
+    if (geometricMask == nullptr) { return false; }
 
-    mTarget->PushLayer(D2D1_LAYER_PARAMETERS(D2D1::InfiniteRect(), geometricMask, D2D1_ANTIALIAS_MODE_PER_PRIMITIVE,
-                                             D2D1::IdentityMatrix(), 1.0),
-                       nullptr);
+    mTarget->PushLayer(
+        D2D1_LAYER_PARAMETERS(
+            D2D1::InfiniteRect(),
+            geometricMask,
+            D2D1_ANTIALIAS_MODE_PER_PRIMITIVE,
+            D2D1::IdentityMatrix(),
+            1.0
+        ),
+        nullptr
+    );
     mClipStack.push(holder);
     geometricMask->Release();
     return true;
 }
 
 void D2DWindowTarget::popClip() {
-    if (mClipStack.empty()) {
-        throw std::runtime_error("pop clip fail,clip stack empty");
-    }
+    if (mClipStack.empty()) { throw std::runtime_error("pop clip fail,clip stack empty"); }
     auto [isLayerClip] = mClipStack.top();
     mClipStack.pop();
     if (isLayerClip) {
@@ -136,8 +144,12 @@ void D2DWindowTarget::drawRoundRect(const UIRect& rect, int radiusX, int radiusY
     assert(pen.testCast(mSafeScopeId, D2DPen_CAST_ID));
     auto penPtr = static_cast<D2DPen*>(&pen)->prepare();
     auto width = numeric_cast<float>(penPtr->strokeWidth());
-    mTarget->DrawRoundedRectangle(convert_to_DRoundRect(rect, radiusX, radiusY), penPtr->brush(), width,
-                                  penPtr->strokeStyle());
+    mTarget->DrawRoundedRectangle(
+        convert_to_DRoundRect(rect, radiusX, radiusY),
+        penPtr->brush(),
+        width,
+        penPtr->strokeStyle()
+    );
 }
 
 void D2DWindowTarget::drawEllipse(const UIEllipse& ellipse, Pen& pen) {
@@ -149,7 +161,7 @@ void D2DWindowTarget::drawEllipse(const UIEllipse& ellipse, Pen& pen) {
 
 void D2DWindowTarget::measureText(TextPaint& format, TextMetrics& metrics) {
     assert(format.testCast(mSafeScopeId, D2DTextFormat_CAST_ID));
-    auto ptr=static_cast<D2DTextFormat*>(&format)->prepare();
+    auto ptr = static_cast<D2DTextFormat*>(&format)->prepare();
 
     IDWriteTextLayout* layoutPtr = ptr->layout();
 
@@ -171,26 +183,37 @@ void D2DWindowTarget::drawText(const UIPoint& origin, TextPaint& text, Pen& pen)
     assert(pen.testCast(mSafeScopeId, D2DPen_CAST_ID));
     assert(text.testCast(mSafeScopeId, D2DTextFormat_CAST_ID));
     auto penPtr = static_cast<D2DPen*>(&pen)->prepare();
-    auto textPtr=static_cast<D2DTextFormat*>(&text)->prepare();
-    mTarget->DrawTextLayout(convert_to_DPointF(origin), textPtr->layout(), penPtr->brush(), D2D1_DRAW_TEXT_OPTIONS_CLIP);
+    auto textPtr = static_cast<D2DTextFormat*>(&text)->prepare();
+    mTarget
+        ->DrawTextLayout(convert_to_DPointF(origin), textPtr->layout(), penPtr->brush(), D2D1_DRAW_TEXT_OPTIONS_CLIP);
 }
 
 void D2DWindowTarget::drawLine(const UILine& line, Pen& pen) {
     assert(pen.testCast(mSafeScopeId, D2DPen_CAST_ID));
     auto penPtr = static_cast<D2DPen*>(&pen)->prepare();
     auto width = numeric_cast<float>(penPtr->strokeWidth());
-    mTarget->DrawLine(convert_to_DPointF(line.p0), convert_to_DPointF(line.p1), penPtr->brush(), width,
-                      penPtr->strokeStyle());
+    mTarget->DrawLine(
+        convert_to_DPointF(line.p0),
+        convert_to_DPointF(line.p1),
+        penPtr->brush(),
+        width,
+        penPtr->strokeStyle()
+    );
 }
 
-void D2DWindowTarget::drawLines(const vector<UILine>& lines, Pen& pen){
+void D2DWindowTarget::drawLines(const vector<UILine>& lines, Pen& pen) {
     assert(pen.testCast(mSafeScopeId, D2DPen_CAST_ID));
     auto penPtr = static_cast<D2DPen*>(&pen)->prepare();
     auto width = numeric_cast<float>(penPtr->strokeWidth());
 
-    for (const auto & line : lines) {
-        mTarget->DrawLine(convert_to_DPointF(line.p0), convert_to_DPointF(line.p1), penPtr->brush(), width,
-                      penPtr->strokeStyle());
+    for (const auto& line : lines) {
+        mTarget->DrawLine(
+            convert_to_DPointF(line.p0),
+            convert_to_DPointF(line.p1),
+            penPtr->brush(),
+            width,
+            penPtr->strokeStyle()
+        );
     }
 }
 

@@ -22,7 +22,9 @@ using namespace std;
 
 namespace bix {
 
-WindowPrivate::WindowPrivate(Window* w) : mPublic(w) { mNative = NativeWindow::create(this); }
+WindowPrivate::WindowPrivate(Window* w) : mPublic(w) {
+    mNative = NativeWindow::create(this);
+}
 
 // void WindowPrivate::createWindow() {}
 
@@ -34,31 +36,22 @@ WindowPrivate::WindowPrivate(Window* w) : mPublic(w) { mNative = NativeWindow::c
 // }
 //
 void WindowPrivate::setWindowTitle(string_view title) {
-    if (mWindowTitle == title) {
-        return;
-    }
+    if (mWindowTitle == title) { return; }
     mWindowTitle = title;
     mNative->setTitle(mWindowTitle);
 
     RectI a{};
     RectF b{};
 
-
     Rect m(a);
     Rect c(b);
 
     RectI p(b);
 
-    if (m==c) {
+    if (m == c) {}
 
-    }
-
-    if (c.isEmpty()) {
-
-    }
-    if (m.isEmpty()) {
-
-    }
+    if (c.isEmpty()) {}
+    if (m.isEmpty()) {}
     BIX_UNUSED(p)
 }
 
@@ -71,9 +64,13 @@ void WindowPrivate::setWindowTitle(string_view title) {
 //     mNativeWindow->setVisible(true);
 // }
 
-bool WindowPrivate::queryNativeInfo(NativeWindowInfo& info) const { return mNative->queryNativeInfo(info); }
+bool WindowPrivate::queryNativeInfo(NativeWindowInfo& info) const {
+    return mNative->queryNativeInfo(info);
+}
 
-std::string WindowPrivate::title() { return mWindowTitle; }
+std::string WindowPrivate::title() {
+    return mWindowTitle;
+}
 
 // void WindowPrivate::handlePaint(const UIRect& rect) {
 //     if (!mRootLayout) {
@@ -221,14 +218,16 @@ void WindowPrivate::requestClose(CloseRequest::Reason reason) {
     CloseRequest request(reason);
     mPublic->onClose(request);
     // ReSharper disable once CppDFAConstantConditions
-    if (!request.isCancelled()) {
-        this->performDestroy();
-    }
+    if (!request.isCancelled()) { this->performDestroy(); }
 }
 
-void WindowPrivate::performDestroy() { mNative->destroyNative(); }
+void WindowPrivate::performDestroy() {
+    mNative->destroyNative();
+}
 
-ScreenPtr WindowPrivate::screen() const { return mNative->getScreen(); }
+ScreenPtr WindowPrivate::screen() const {
+    return mNative->getScreen();
+}
 
 //
 // void WindowPrivate::handleResizeEvent(const SizeF& size) {

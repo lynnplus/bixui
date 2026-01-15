@@ -15,7 +15,7 @@
  */
 
 #pragma once
-#include "bixlib/core/display.h"
+#include "../../../include/bixlib/window/screen.h"
 
 #include <windows.h>
 
@@ -39,6 +39,7 @@ public:
 
 private:
     const int mBaseDpi = 96;
+    HWND mHwnd = nullptr;
     HMONITOR mMonitor = nullptr;
     int mDpi = 96; // USER_DEFAULT_SCREEN_DPI
     std::string mDeviceName{};
