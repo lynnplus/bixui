@@ -15,10 +15,10 @@
  */
 
 #pragma once
+#include "../core/length.h"
 #include "bixlib/geometry/shape.h"
-#include "bixlib/render/canvas.h"
+#include "bixlib/graphics/canvas.h"
 #include "bixlib/utils/flags.h"
-#include "length.h"
 
 namespace bix {
 

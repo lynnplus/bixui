@@ -14,47 +14,45 @@
  * limitations under the License.
  */
 
-#include "bixlib/controls/label.h"
+#include "../../include/bixlib/widgets/label.h"
 
 #include "bixlib/control_names.h"
-#include "bixlib/render/engine.h"
+#include "bixlib/graphics/engine.h"
 #include "bixlib/utils/fmt_bix.h"
 
 namespace bix {
 
-const std::string& Label::className() const noexcept { return names::ClsNameLabel; }
+const std::string& Label::className() const noexcept {
+    return names::ClsNameLabel;
+}
 
-void Label::setText(const std::string& str) { mText = str; }
+void Label::setText(const std::string& str) {
+    mText = str;
+}
 
-void Label::setTextSize(int size) { mTextSize = size; }
+void Label::setTextSize(int size) {
+    mTextSize = size;
+}
 
 void Label::setTextLines(int maxLines) {
-    if (mMaxLines != maxLines && maxLines > 0) {
-        mMaxLines = maxLines;
-    }
+    if (mMaxLines != maxLines && maxLines > 0) { mMaxLines = maxLines; }
 }
 
 void Label::onLayout(const UIRect& rect) {
     BIX_UNUSED(rect)
-    if (mTextPaint) {
-        mTextPaint->setMaxSize(mTextBox.size());
-    }
+    if (mTextPaint) { mTextPaint->setMaxSize(mTextBox.size()); }
 }
 
-void Label::onDraw(Canvas& canvas) {
-    Control::onDraw(canvas);
+void Label::onPaint(Canvas& canvas) {
+    Widget::onPaint(canvas);
 
-    if (!mTextPen) {
-        mTextPen = canvas.createPen(mTextColor);
-    }
-    if (!mTextPaint) {
-        setupTextPaint(canvas);
-    }
+    if (!mTextPen) { mTextPen = canvas.createPen(mTextColor); }
+    if (!mTextPaint) { setupTextPaint(canvas); }
     canvas.drawText(mTextBox.lt(), *mTextPaint, *mTextPen);
 }
 
 void Label::discardCanvas() {
-    Control::discardCanvas();
+    Widget::discardCanvas();
     mTextPen = nullptr;
     mTextPaint = nullptr;
 }
@@ -84,25 +82,17 @@ void Label::onMeasure(Canvas& canvas, const UISize& available, const UISize& max
     auto result = mSize.get(available);
     auto pad = getPaddingWithForeground();
 
-    if (!mTextPaint) {
-        setupTextPaint(canvas);
-    }
+    if (!mTextPaint) { setupTextPaint(canvas); }
     mTextPaint->setMaxSize(result - pad);
 
     TextMetrics metrics{};
     canvas.measureText(*mTextPaint, metrics);
 
-    if (result.width < 0) {
-        result.width = metrics.minWidth + pad.totalX();
-    }
+    if (result.width < 0) { result.width = metrics.minWidth + pad.totalX(); }
 
     result.width = std::max(result.width, mMinSize.width);
-    if (available.width >= 0 && result.width > available.width) {
-        result.width = available.width;
-    }
-    if (max.width >= 0) {
-        result.width = std::min(result.width, max.width);
-    }
+    if (available.width >= 0 && result.width > available.width) { result.width = available.width; }
+    if (max.width >= 0) { result.width = std::min(result.width, max.width); }
 
     int remaining = std::max(0, result.width - pad.totalX());
     mTextBox.setWidth(std::min(metrics.minWidth, remaining));
@@ -113,12 +103,8 @@ void Label::onMeasure(Canvas& canvas, const UISize& available, const UISize& max
         result.height = metrics.height + pad.totalY();
     }
     result.height = std::max(result.height, mMinSize.height);
-    if (available.height >= 0 && result.height > available.height) {
-        result.height = available.height;
-    }
-    if (max.height >= 0) {
-        result.height = std::min(result.height, max.height);
-    }
+    if (available.height >= 0 && result.height > available.height) { result.height = available.height; }
+    if (max.height >= 0) { result.height = std::min(result.height, max.height); }
     remaining = std::max(0, result.height - pad.totalY());
     mTextBox.setHeight(std::min(metrics.height, remaining));
 

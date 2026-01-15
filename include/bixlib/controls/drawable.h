@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include "bixlib/render/canvas.h"
+#include "bixlib/graphics/canvas.h"
 
 namespace bix {
 class BIX_PUBLIC Drawable {
@@ -28,11 +28,10 @@ public:
 
     const UIRect& bounds() const;
 
+    virtual void draw(Canvas* canvas) = 0;
+    virtual void setAlpha(int alpha) = 0;
 
-    virtual void draw(Canvas* canvas) =0;
-    virtual void setAlpha(int alpha) =0;
-
-    virtual void discardCanvas() =0;
+    virtual void discardCanvas() = 0;
 
 protected:
     bool mVisible = true;
@@ -55,4 +54,4 @@ protected:
     Color mColor{};
     ColorBrushPtr mBrush = nullptr;
 };
-}
+} // namespace bix

@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-#include "bixlib/controls/switch.h"
+#include "../../include/bixlib/widgets/switch.h"
 
 namespace bix {} // namespace bix

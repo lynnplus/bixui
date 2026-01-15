@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 
-#include "bixlib/controls/flex_layout.h"
+#include "../../include/bixlib/layout/flex_layout.h"
 
 namespace bix {} // namespace bix
