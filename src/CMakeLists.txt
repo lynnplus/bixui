@@ -33,10 +33,23 @@ target_compile_definitions(bix_build_config INTERFACE
 if (WIN32)
     target_compile_definitions(bix_build_config INTERFACE "UNICODE" "_UNICODE" "NOMINMAX" "WIN32_LEAN_AND_MEAN")
 endif ()
+
 if (MSVC)
     target_compile_options(bix_build_config INTERFACE "/utf-8" "/W4" "/WX" "/permissive-" "/sdl")
-else ()
-    target_compile_options(bix_build_config INTERFACE "-Wall" "-Wextra" "-Werror")
+endif ()
+
+if (CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    if (NOT MSVC)
+        target_compile_options(bix_build_config INTERFACE "-Wall" "-Wextra" "-Werror" "-pedantic-errors" "-pedantic")
+    endif ()
+    target_compile_options(bix_build_config INTERFACE
+            "-Wfloat-equal" "-Wshadow" "-Wconversion" "-Wsign-conversion"
+            "-Wold-style-cast" "-Wcast-qual" "-Wcast-align" "-Wundef" "-Wwrite-strings" "-Wpointer-arith"
+            "-Woverloaded-virtual" "-Wmissing-include-dirs" "-Wdisabled-optimization" "-Wredundant-decls"
+            "-Wzero-as-null-pointer-constant" "-Wdeprecated" "-Wdouble-promotion"
+            "-Wnull-dereference" "-Wweak-vtables"
+            "-Wmissing-declarations" "-Wunreachable-code" "-Wimplicit-fallthrough"
+    )
 endif ()
 
 set_target_properties(${BIX_TARGET_NAME} PROPERTIES
@@ -50,12 +63,9 @@ set_target_properties(${BIX_TARGET_NAME} PROPERTIES
 add_library(bix_geometry INTERFACE)
 bix_module_setup(bix_geometry)
 bix_module_add_headers(bix_geometry "geometry.h"
-        "geometry/ellipse.h"
-        "geometry/line_segment.h"
-        "geometry/point.h"
-        "geometry/rect.h"
-        "geometry/shape.h"
-        "geometry/size.h"
+        "geometry/corner_radii.h" "geometry/round_rect.h"
+        "geometry/line.h" "geometry/point.h" "geometry/rect.h"
+        "geometry/shape.h" "geometry/size.h"
 )
 
 target_include_directories(${BIX_TARGET_NAME} PUBLIC
